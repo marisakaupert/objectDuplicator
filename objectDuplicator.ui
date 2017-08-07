@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Dialog</class>
+ <widget class="QDialog" name="Dialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>867</width>
+    <height>801</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
+    <layout class="QVBoxLayout" name="verticalLayout_2">
+     <property name="margin">
+      <number>5</number>
+     </property>
+     <item>
+      <widget class="QLabel" name="instructionsLabel">
+       <property name="text">
+        <string>To use tool, enter name of surface you want objects duplicated on below and then select objects to duplicated. Press button to create geometry.</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <property name="margin">
+        <number>5</number>
+       </property>
+       <item>
+        <widget class="QLabel" name="nameOfSurfaceLabel">
+         <property name="text">
+          <string>Name of Surface: </string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="nameOfSurfaceLineEdit"/>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <property name="margin">
+        <number>5</number>
+       </property>
+       <item>
+        <widget class="QLabel" name="percentageGeneratedLabel">
+         <property name="text">
+          <string>Percentage Generated (must be between 1 and 10): </string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="percentageGeneratedLineEdit"/>
+       </item>
+       <item>
+        <widget class="QSlider" name="percentageGeneratedHorizontalSlider">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_4">
+       <property name="margin">
+        <number>10</number>
+       </property>
+       <item>
+        <widget class="QLabel" name="scaleLabel">
+         <property name="text">
+          <string>Scale (must be between 1 and 10):</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="scaleLineEdit"/>
+       </item>
+       <item>
+        <widget class="QSlider" name="scaleHorizontalSlider">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_5">
+       <property name="margin">
+        <number>5</number>
+       </property>
+       <item>
+        <widget class="QCheckBox" name="randomizeScaleCheckBox">
+         <property name="text">
+          <string>Randomize Scale</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="turnOffRandomizedRotationCheckBox">
+         <property name="text">
+          <string>Turn Off Randomized Rotation</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_4">
+       <property name="margin">
+        <number>5</number>
+       </property>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <property name="margin">
+          <number>5</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="minRandomizedScaleValueLabel">
+           <property name="text">
+            <string>Minimum Scale:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="minRandomizedScaleLineEdit"/>
+         </item>
+         <item>
+          <widget class="QSlider" name="minRandomizedScaleValueHorizontalSlider">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_6">
+         <property name="margin">
+          <number>5</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="maxRandomizedScaleValueLabel">
+           <property name="text">
+            <string>Maximum Scale:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="maxRandomizedScaleLineEdit"/>
+         </item>
+         <item>
+          <widget class="QSlider" name="maxRandomizedScaleValueHorizontalSlider">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <property name="margin">
+        <number>5</number>
+       </property>
+       <item>
+        <widget class="QPushButton" name="createGeometryPushButton">
+         <property name="text">
+          <string>Create Locators and Geometry</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="deleteLocatorsPushButton">
+         <property name="text">
+          <string>Delete Locators</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="emptyScenePushButton">
+         <property name="text">
+          <string>Empty Scene</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <property name="margin">
+        <number>5</number>
+       </property>
+       <item>
+        <widget class="QLabel" name="itemsCreatedLabel">
+         <property name="text">
+          <string>Items Created:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QListWidget" name="itemsCreatedListWidget"/>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
