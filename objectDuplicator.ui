@@ -98,31 +98,24 @@
       </layout>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_5">
-       <property name="margin">
-        <number>5</number>
-       </property>
-       <item>
-        <widget class="QCheckBox" name="randomizeScaleCheckBox">
-         <property name="text">
-          <string>Randomize Scale</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="turnOffRandomizedRotationCheckBox">
-         <property name="text">
-          <string>Turn Off Randomized Rotation</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item>
       <layout class="QVBoxLayout" name="verticalLayout_4">
        <property name="margin">
         <number>5</number>
        </property>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_7">
+         <property name="margin">
+          <number>5</number>
+         </property>
+         <item>
+          <widget class="QCheckBox" name="randomizeScaleCheckBox">
+           <property name="text">
+            <string>Randomize Scale Between Minimum and Maximum</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_3">
          <property name="margin">
@@ -171,6 +164,96 @@
          </item>
         </layout>
        </item>
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout_5">
+         <property name="margin">
+          <number>5</number>
+         </property>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_8">
+           <property name="margin">
+            <number>5</number>
+           </property>
+           <item>
+            <widget class="QCheckBox" name="checkBox_4">
+             <property name="text">
+              <string>CheckBox</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="checkBox_3">
+             <property name="text">
+              <string>CheckBox</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="checkBox_2">
+             <property name="text">
+              <string>CheckBox</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="checkBox">
+             <property name="text">
+              <string>CheckBox</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_5">
+           <property name="margin">
+            <number>5</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="label">
+             <property name="text">
+              <string>TextLabel</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="lineEdit"/>
+           </item>
+           <item>
+            <widget class="QSlider" name="horizontalSlider">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_9">
+           <property name="margin">
+            <number>5</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="label_2">
+             <property name="text">
+              <string>TextLabel</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="lineEdit_2"/>
+           </item>
+           <item>
+            <widget class="QSlider" name="horizontalSlider_2">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </item>
       </layout>
      </item>
      <item>
@@ -204,17 +287,44 @@
      <item>
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <property name="margin">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QLabel" name="importLabel">
+         <property name="layoutDirection">
+          <enum>Qt::LeftToRight</enum>
+         </property>
+         <property name="text">
+          <string>Import Geometry/Nurbs to be Duplicated:</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_10">
+       <property name="margin">
         <number>5</number>
        </property>
        <item>
-        <widget class="QLabel" name="itemsCreatedLabel">
+        <widget class="QPushButton" name="browsePushButton">
          <property name="text">
-          <string>Items Created:</string>
+          <string>...</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QListWidget" name="itemsCreatedListWidget"/>
+        <widget class="QLineEdit" name="lineEdit_3"/>
+       </item>
+       <item>
+        <widget class="QPushButton" name="importPushButton">
+         <property name="text">
+          <string>Import</string>
+         </property>
+        </widget>
        </item>
       </layout>
      </item>
