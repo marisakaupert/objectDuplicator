@@ -20,17 +20,18 @@ import maya.OpenMayaUI as omui
 _logger = logging.getLogger(__name__)
 _logger.setLevel(logging.DEBUG)
 
+
 """
 to add a new path:
 import sys 
 sys.path.append( 'palce path here', Ex: 'C:\Users\yourName\Documents/folderName' )
 
 Otherwise, type this into the Script Editor:
-
 import objectDuplicator as ob
 reload(ob)
 ob.run()
 """
+
 
 def getMayaWindow():
     """ Pointer to the Maya Main Window 
@@ -598,7 +599,7 @@ class ObjectDuplicator(QtGui.QDialog):
 
         fileToImport = self.fileNameLineEdit.text()
         mc.file(fileToImport, i=True, iv=True, mnc=False)
-        
+
 
 
     @stopwatch
