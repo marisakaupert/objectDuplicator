@@ -2,7 +2,7 @@ Object Duplicator is a robust UI made with PyMel. The UI dupliactes objects on a
 
 Put objectDuplicator.py in your Maya scripts directory or add the folder with myModule.py to your python path.
 Type this into the Script Editor:
-'''python
+```python
 # to add path
 import sys 
 sys.path.append( 'C:\Users\Marisa\Documents/objectDuplicator' )
@@ -11,4 +11,4 @@ sys.path.append( 'C:\Users\Marisa\Documents/objectDuplicator' )
 import objectDuplicator as ob
 reload(ob)
 ob.run()
-'''
+```
