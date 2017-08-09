@@ -1,4 +1,4 @@
-Object Duplicator is a robust UI made with PyMel. The UI dupliactes objects on a given surface, where the user can customize scale, rotation, and import custom models.
+Object Duplicator is a robust UI made with PyMel. The UI duplicates objects on a given surface, where the user can customize scale, rotation, and import custom models.
 
 ## To use: ##
 * Download objectDuplicator.py
