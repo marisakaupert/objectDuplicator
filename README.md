@@ -5,7 +5,7 @@ Type this into the Script Editor:
 ```python
 # to add path
 import sys 
-sys.path.append( 'C:\Users\Marisa\Documents/objectDuplicator' )
+sys.path.append( 'C:\Users\yourName\Documents/folderName' )
 
 # otherwise, run this
 import objectDuplicator as ob
