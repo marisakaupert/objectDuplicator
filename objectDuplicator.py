@@ -339,7 +339,7 @@ class ObjectDuplicator(QtGui.QDialog):
         
         userInputScale = float(self.percentageGeneratedLineEdit.text())
 
-        if userInputScale < 0.1:
+        if userInputScale < 1.0:
             self.scaleValue = 1.0
         elif userInputScale > 100.0:
             self.scaleValue = 100.0
@@ -364,7 +364,7 @@ class ObjectDuplicator(QtGui.QDialog):
         
         userInputScale = float(self.scaleLineEdit.text())
 
-        if userInputScale < 0.1:
+        if userInputScale < 1.0:
             self.scaleValue = 1.0
         elif userInputScale > 100.0:
             self.scaleValue = 100.0
@@ -419,7 +419,7 @@ class ObjectDuplicator(QtGui.QDialog):
         
         userInputScale = float(self.minRandomizedScaleLineEdit.text())
 
-        if userInputScale < 0.1:
+        if userInputScale < 1.0:
             self.scaleValue = 1.0
         elif userInputScale > 100.0:
             self.scaleValue = 100.0
@@ -434,7 +434,7 @@ class ObjectDuplicator(QtGui.QDialog):
         
         userInputScale = float(self.maxRandomizedScaleLineEdit.text())
 
-        if userInputScale < 0.1:
+        if userInputScale < 1.0:
             self.scaleValue = 1.0
         elif userInputScale > 100.0:
             self.scaleValue = 100.0
@@ -625,7 +625,6 @@ class ObjectDuplicator(QtGui.QDialog):
         
         """
         
-        #Puts all geometry in the scene into a list
         selectedObject = pm.ls(sl=True)
         sizeOfSelectedObject = int(pm.getAttr(selectedObject[0] + '.scaleY'))
         boundingBox = pm.exactWorldBoundingBox(selectedObject)
@@ -638,27 +637,25 @@ class ObjectDuplicator(QtGui.QDialog):
 
         
 
-
         def vertLocators():
-            """ Iterates through vertices on surface, attaches Locators an objects
+            """ Iterates through vertices on surface, attaches locators and objects
             """
             
-            #Selects all vertices, puts all vertice coordinates in a list
+            # Selects all vertices, puts all vertice coordinates in a list
             pm.select(nameOfSurface)
             vs = pm.polyEvaluate(v=True)
             verts = [] 
             vertLocCount = 0 
             for i in range(0,vs):
-                verts += (pm.pointPosition(nameOfSurface + '.vtx['+ str(i) + ']'))
+                verts += (pm.pointPosition(nameOfSurface + '.vtx['+ str(i) + ']'), )
 
-            
-            #Creates locators
-            for v in verts: 
-                numGen = r.random()
+            # Creates locators
+            for v in verts:
+                numGen = r.random() 
                 if (numGen <= num):
-                    vertsLocsNames = pm.spaceLocator(n="vertexLoc{0}".format(1), p=(v[0],v[1],v[2]))
+                    pm.spaceLocator(n="vertexLoc{0}".format(1), p=(v[0],v[1],v[2]))
                     duplicatedObject = pm.instance(selectedObject, leaf = True)
-                    pm.setAttr(duplicatedObject[0] + '.translate', v[0], v[1], v[2])
+                    pm.setAttr(duplicatedObject[0] + '.translate', (v[0],v[1],v[2]))
                     randomScaleNumber = r.randrange(minRandomScale, maxRandomScale)
                     randomRotationNumber = r.randrange(minRandomRotation, maxRandomRotation)
 
@@ -690,13 +687,12 @@ class ObjectDuplicator(QtGui.QDialog):
         
         
         def faceLocators():
-            """ Iterates through faces on surface, attaches Locators and objects
+            """ Iterates through faces on surface, attaches locators and objects
             """
             
-            #Selects all faces, puts average center coordinates in a list
+            # Selects all faces, puts average center coordinates in a list
             pm.select(nameOfSurface)
             fc = pm.polyEvaluate(face=True)
-            faces = [] 
             faceLocCount=0
             for x in range(0, fc):
                 numGen = r.random()
@@ -706,9 +702,9 @@ class ObjectDuplicator(QtGui.QDialog):
                 transZ = (bBox[2] + bBox[5])/2
 
                 
-                #Creates locators
+                # Creates locators
                 if (numGen <= num):
-                    faceLocsNames = pm.spaceLocator(n="faceLoc{0}".format(1), p=(transX, transY, transZ))
+                    pm.spaceLocator(n="faceLoc{0}".format(1), p=(transX, transY, transZ))
                     duplicatedObject = pm.instance(selectedObject, leaf=True)
                     pm.setAttr(duplicatedObject[0] + '.translate', transX, transY, transZ)
                     randomScaleNumber = r.randrange(minRandomScale, maxRandomScale)
@@ -740,7 +736,7 @@ class ObjectDuplicator(QtGui.QDialog):
             _logger.debug("Generated " + str(faceLocCount) + " locators at faces for " + str(fc) + " possible surfaces.(" + str(totalFace) + "%) ")
                     
                     
-        if (num < 0 or num > 1):
+        if (num < 0.01 or num > 10.0):
             _logger.error("Error. Please input a number between 1 and 100")
         elif (pm.objExists(nameOfSurface) == False):
             _logger.error("Error. Enter a name of a plane that exists in your project.")
