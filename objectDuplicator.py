@@ -471,24 +471,18 @@ class ObjectDuplicator(QtGui.QDialog):
             self.randomizedRotation = True
             self.setMinMaxRotationValues()
 
-        elif self.randomizeRotateXCheckBox.isChecked():
+        if self.randomizeRotateXCheckBox.isChecked():
             self.randomizeX = True
             self.setMinMaxRotationValues()
 
-        elif self.randomizeRotateYCheckBox.isChecked():
+        if self.randomizeRotateYCheckBox.isChecked():
             self.randomizeY = True
             self.setMinMaxRotationValues()
 
-        elif self.randomizeRotateZCheckBox.isChecked():
+        if self.randomizeRotateZCheckBox.isChecked():
             self.randomizeZ = True
             self.setMinMaxRotationValues()
             
-        else:
-            self.randomizedRotation = False
-            self.randomizeX = False
-            self.randomizeY = False
-            self.randomizeZ = False
-    
 
     def minRandomizedRotationChange(self, value):
         """ Changes the minimum rotation number to mirror the slider.
@@ -662,21 +656,17 @@ class ObjectDuplicator(QtGui.QDialog):
                     if randomScale == True:
                         pm.setAttr(duplicatedObject[0] + '.scale', randomScaleNumber, randomScaleNumber, randomScaleNumber)
 
-                    elif randomRotation == True:      
+                    if randomRotation == True:      
                         pm.setAttr(duplicatedObject[0] + '.rotate', randomRotationNumber, randomRotationNumber, randomRotationNumber)
 
-                    elif randomX == True:
+                    if randomX == True:
                         pm.setAttr(duplicatedObject[0] + '.rotateX', randomRotationNumber)
 
-                    elif randomY == True:
+                    if randomY == True:
                         pm.setAttr(duplicatedObject[0] + '.rotateY', randomRotationNumber)
 
-                    elif randomZ == True:
+                    if randomZ == True:
                         pm.setAttr(duplicatedObject[0] + '.rotateZ', randomRotationNumber)
-                    else:
-                        pm.setAttr(duplicatedObject[0] + '.scale', scaleOfItems, scaleOfItems, scaleOfItems)
-                        pm.setAttr(duplicatedObject[0] + '.rotate', 0,0,0)
-                    
                     
 
                     vertLocCount += 1
@@ -713,20 +703,17 @@ class ObjectDuplicator(QtGui.QDialog):
                     if randomScale == True:
                         pm.setAttr(duplicatedObject[0] + '.scale', randomScaleNumber, randomScaleNumber, randomScaleNumber)
 
-                    elif randomRotation == True:      
+                    if randomRotation == True:      
                         pm.setAttr(duplicatedObject[0] + '.rotate', randomRotationNumber, randomRotationNumber, randomRotationNumber)
 
-                    elif randomX == True:
+                    if randomX == True:
                         pm.setAttr(duplicatedObject[0] + '.rotateX', randomRotationNumber)
 
-                    elif randomY == True:
+                    if randomY == True:
                         pm.setAttr(duplicatedObject[0] + '.rotateY', randomRotationNumber)
 
-                    elif randomZ == True:
+                    if randomZ == True:
                         pm.setAttr(duplicatedObject[0] + '.rotateZ', randomRotationNumber)
-                    else:
-                        pm.setAttr(duplicatedObject[0] + '.scale', scaleOfItems, scaleOfItems, scaleOfItems)
-                        pm.setAttr(duplicatedObject[0] + '.rotate', 0,0,0)
                     
                     
                     faceLocCount += 1
