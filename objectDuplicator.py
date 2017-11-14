@@ -23,7 +23,7 @@ _logger.setLevel(logging.DEBUG)
 
 """
 to add a new path:
-import sys 
+import sys
 sys.path.append( 'palce path here', Ex: 'C:\Users\yourName\Documents/folderName' )
 
 Otherwise, type this into the Script Editor:
@@ -38,7 +38,7 @@ def getMayaWindow():
     """
 
     ptr = omui.MQtUtil.mainWindow()
-    if ptr :
+    if ptr:
         return wrapInstance(long(ptr), QtGui.QMainWindow)
 
 
@@ -47,8 +47,10 @@ def run():
     """
 
     global win
-    if win:
+    try:
         win.close()
+    except:
+        pass
     win = ObjectDuplicator(parent=getMayaWindow())
     win.show()
 
@@ -58,7 +60,7 @@ def stopwatch(func):
         @return: float, total seconds
     """
 
-    def timed (*args, **kwargs):
+    def timed(*args, **kwargs):
 
         timeStart = time.time()
 
@@ -66,7 +68,7 @@ def stopwatch(func):
 
         timeEnd = time.time()
         elapsedTime = timeEnd - timeStart
-        _logger.debug("%2.2f sec" %(elapsedTime))
+        _logger.debug("%2.2f sec" % (elapsedTime))
 
         return result
 
@@ -78,22 +80,23 @@ class ObjectDuplicator(QtGui.QDialog):
     """
 
     def __init__(self, parent=None):
-        super(ObjectDuplicator,self).__init__(parent)
+        super(ObjectDuplicator, self).__init__(parent)
 
         self.scaleValue = 1.0
         self.randomizedScale = False
+        self.setRotationToNormals = False
         self.randomizedRotation = False
         self.randomizeX = False
         self.randomizeY = False
         self.randomizeZ = False
-
 
         self.gridLayout = QtGui.QGridLayout()
 
         self.verticalLayout_2 = QtGui.QVBoxLayout()
         self.verticalLayout_2.setContentsMargins(5, 5, 5, 5)
 
-        self.instructionsLabel = QtGui.QLabel("To use tool, enter name of surface you want objects duplicated on below and then select objects to duplicated. Press button to create geometry.")
+        self.instructionsLabel = QtGui.QLabel(
+            "To use tool, enter name of surface you want objects duplicated on below and then select objects to duplicated. Press button to create geometry.")
         self.instructionsLabel.setAlignment(QtCore.Qt.AlignCenter)
         self.instructionsLabel.setWordWrap(True)
         self.verticalLayout_2.addWidget(self.instructionsLabel)
@@ -119,8 +122,10 @@ class ObjectDuplicator(QtGui.QDialog):
         self.percentageGeneratedHorizontalSlider = QtGui.QSlider()
         self.percentageGeneratedHorizontalSlider.setMinimum(1)
         self.percentageGeneratedHorizontalSlider.setMaximum(100)
-        self.percentageGeneratedHorizontalSlider.setOrientation(QtCore.Qt.Horizontal)
-        self.horizontalLayout_2.addWidget(self.percentageGeneratedHorizontalSlider)
+        self.percentageGeneratedHorizontalSlider.setOrientation(
+            QtCore.Qt.Horizontal)
+        self.horizontalLayout_2.addWidget(
+            self.percentageGeneratedHorizontalSlider)
 
         self.verticalLayout_2.addLayout(self.horizontalLayout_2)
         self.horizontalLayout_4 = QtGui.QHBoxLayout()
@@ -161,8 +166,10 @@ class ObjectDuplicator(QtGui.QDialog):
         self.minRandomizedScaleValueHorizontalSlider = QtGui.QSlider()
         self.minRandomizedScaleValueHorizontalSlider.setMinimum(1)
         self.minRandomizedScaleValueHorizontalSlider.setMaximum(100)
-        self.minRandomizedScaleValueHorizontalSlider.setOrientation(QtCore.Qt.Horizontal)
-        self.horizontalLayout_3.addWidget(self.minRandomizedScaleValueHorizontalSlider)
+        self.minRandomizedScaleValueHorizontalSlider.setOrientation(
+            QtCore.Qt.Horizontal)
+        self.horizontalLayout_3.addWidget(
+            self.minRandomizedScaleValueHorizontalSlider)
 
         self.verticalLayout_4.addLayout(self.horizontalLayout_3)
         self.horizontalLayout_6 = QtGui.QHBoxLayout()
@@ -177,8 +184,10 @@ class ObjectDuplicator(QtGui.QDialog):
         self.maxRandomizedScaleValueHorizontalSlider = QtGui.QSlider()
         self.maxRandomizedScaleValueHorizontalSlider.setMinimum(1)
         self.maxRandomizedScaleValueHorizontalSlider.setMaximum(100)
-        self.maxRandomizedScaleValueHorizontalSlider.setOrientation(QtCore.Qt.Horizontal)
-        self.horizontalLayout_6.addWidget(self.maxRandomizedScaleValueHorizontalSlider)
+        self.maxRandomizedScaleValueHorizontalSlider.setOrientation(
+            QtCore.Qt.Horizontal)
+        self.horizontalLayout_6.addWidget(
+            self.maxRandomizedScaleValueHorizontalSlider)
 
         self.verticalLayout_4.addLayout(self.horizontalLayout_6)
         self.verticalLayout_5 = QtGui.QVBoxLayout()
@@ -187,16 +196,21 @@ class ObjectDuplicator(QtGui.QDialog):
         self.horizontalLayout_8 = QtGui.QHBoxLayout()
         self.horizontalLayout_8.setContentsMargins(5, 5, 5, 5)
 
-        self.randomizeAllRotationCheckBox = QtGui.QCheckBox("Randomize Rotation")
+        self.setRotationToNormals = QtGui.QCheckBox(
+            "Set Rotation to Surface Normals")
+        self.horizontalLayout_8.addWidget(self.setRotationToNormals)
+
+        self.randomizeAllRotationCheckBox = QtGui.QCheckBox(
+            "Randomize Rotation")
         self.horizontalLayout_8.addWidget(self.randomizeAllRotationCheckBox)
 
-        self.randomizeRotateXCheckBox = QtGui.QCheckBox("Randomize Rotate X")
+        self.randomizeRotateXCheckBox = QtGui.QCheckBox("Randomize X")
         self.horizontalLayout_8.addWidget(self.randomizeRotateXCheckBox)
 
-        self.randomizeRotateYCheckBox = QtGui.QCheckBox("Randomize Rotate Y")
+        self.randomizeRotateYCheckBox = QtGui.QCheckBox("Randomize Y")
         self.horizontalLayout_8.addWidget(self.randomizeRotateYCheckBox)
 
-        self.randomizeRotateZCheckBox = QtGui.QCheckBox("Randomize Rotate Z")
+        self.randomizeRotateZCheckBox = QtGui.QCheckBox("Randomize Z")
         self.horizontalLayout_8.addWidget(self.randomizeRotateZCheckBox)
 
         self.verticalLayout_5.addLayout(self.horizontalLayout_8)
@@ -212,8 +226,10 @@ class ObjectDuplicator(QtGui.QDialog):
         self.minRandomizedRotationHorizontalSlider = QtGui.QSlider()
         self.minRandomizedRotationHorizontalSlider.setMinimum(-100)
         self.minRandomizedRotationHorizontalSlider.setMaximum(100)
-        self.minRandomizedRotationHorizontalSlider.setOrientation(QtCore.Qt.Horizontal)
-        self.horizontalLayout_5.addWidget(self.minRandomizedRotationHorizontalSlider)
+        self.minRandomizedRotationHorizontalSlider.setOrientation(
+            QtCore.Qt.Horizontal)
+        self.horizontalLayout_5.addWidget(
+            self.minRandomizedRotationHorizontalSlider)
 
         self.verticalLayout_5.addLayout(self.horizontalLayout_5)
         self.horizontalLayout_9 = QtGui.QHBoxLayout()
@@ -228,8 +244,10 @@ class ObjectDuplicator(QtGui.QDialog):
         self.maxRandomizedRotationHorizontalSlider = QtGui.QSlider()
         self.maxRandomizedRotationHorizontalSlider.setMinimum(-100)
         self.maxRandomizedRotationHorizontalSlider.setMaximum(100)
-        self.maxRandomizedRotationHorizontalSlider.setOrientation(QtCore.Qt.Horizontal)
-        self.horizontalLayout_9.addWidget(self.maxRandomizedRotationHorizontalSlider)
+        self.maxRandomizedRotationHorizontalSlider.setOrientation(
+            QtCore.Qt.Horizontal)
+        self.horizontalLayout_9.addWidget(
+            self.maxRandomizedRotationHorizontalSlider)
 
         self.verticalLayout_5.addLayout(self.horizontalLayout_9)
         self.verticalLayout_4.addLayout(self.verticalLayout_5)
@@ -247,7 +265,8 @@ class ObjectDuplicator(QtGui.QDialog):
         self.verticalLayout_3 = QtGui.QVBoxLayout()
         self.verticalLayout_3.setContentsMargins(0, 0, 0, 0)
 
-        self.importLabel = QtGui.QLabel("Import Geometry/Nurbs to be Duplicated:")
+        self.importLabel = QtGui.QLabel(
+            "Import Geometry/Nurbs to be Duplicated:")
         self.importLabel.setLayoutDirection(QtCore.Qt.LeftToRight)
         self.importLabel.setAlignment(QtCore.Qt.AlignCenter)
         self.verticalLayout_3.addWidget(self.importLabel)
@@ -280,63 +299,81 @@ class ObjectDuplicator(QtGui.QDialog):
 
         self.nameOfSurfaceLineEdit.setPlaceholderText("Name of Geometry Here")
         self.percentageGeneratedHorizontalSlider.setValue(self.scaleValue)
-        self.minScaleValue = int(round(float(self.minRandomizedScaleLineEdit.text())))
-        self.maxScaleValue = int(round(float(self.maxRandomizedScaleLineEdit.text())))
-        self.minRotationValue = int(round(float(self.minRandomizedRotationLineEdit.text())))
-        self.maxRotationValue = int(round(float(self.maxRandomizedRotationLineEdit.text())))
+        self.minScaleValue = int(round(float(
+            self.minRandomizedScaleLineEdit.text())))
+        self.maxScaleValue = int(round(float(
+            self.maxRandomizedScaleLineEdit.text())))
+        self.minRotationValue = int(round(float(
+            self.minRandomizedRotationLineEdit.text())))
+        self.maxRotationValue = int(round(float(
+            self.maxRandomizedRotationLineEdit.text())))
         self.fileNameLineEdit.setPlaceholderText("File Name Here")
 
     def makeConnections(self):
         """ All functions to make the UI work.
         """
 
-        self.percentageGeneratedHorizontalSlider.valueChanged[int].connect(self.percentageChange)
-        self.percentageGeneratedLineEdit.editingFinished.connect(self.manualPercentageEnteredEvent)
+        self.percentageGeneratedHorizontalSlider.valueChanged[int].connect(
+            self.percentageChange)
+        self.percentageGeneratedLineEdit.editingFinished.connect(
+            self.manualPercentageEnteredEvent)
 
         self.scaleHorizontalSlider.valueChanged[int].connect(self.scaleChange)
-        self.scaleLineEdit.editingFinished.connect(self.manualScaleEnteredEvent)
+        self.scaleLineEdit.editingFinished.connect(
+            self.manualScaleEnteredEvent)
+        self.randomizeScaleCheckBox.stateChanged.connect(
+            self.disableMainScaleSlider)
 
-        self.randomizeScaleCheckBox.stateChanged.connect(self.disableMainScaleSlider)
+        self.minRandomizedScaleValueHorizontalSlider.valueChanged[int].connect(
+            self.minRandomizedScaleChange)
+        self.minRandomizedScaleLineEdit.editingFinished.connect(
+            self.manualMinScaleEnteredEvent)
+        self.maxRandomizedScaleValueHorizontalSlider.valueChanged[int].connect(
+            self.maxRandomizedScaleChange)
+        self.maxRandomizedScaleLineEdit.editingFinished.connect(
+            self.manualMaxScaleEnteredEvent)
 
-        self.minRandomizedScaleValueHorizontalSlider.valueChanged[int].connect(self.minRandomizedScaleChange)
-        self.minRandomizedScaleLineEdit.editingFinished.connect(self.manualMinScaleEnteredEvent)
-        self.maxRandomizedScaleValueHorizontalSlider.valueChanged[int].connect(self.maxRandomizedScaleChange)
-        self.maxRandomizedScaleLineEdit.editingFinished.connect(self.manualMaxScaleEnteredEvent)
+        self.setRotationToNormals.stateChanged.connect(
+            self.disableRotationCheckBoxes)
 
-        self.randomizeAllRotationCheckBox.stateChanged.connect(self.checkAllRotationBoxState)
+        self.setRotationToNormals.stateChanged.connect(
+            self.checkNormalsRotationBoxesState)
 
+        self.randomizeAllRotationCheckBox.stateChanged.connect(
+            self.checkAllRotationBoxState)
 
-        self.minRandomizedRotationHorizontalSlider.valueChanged[int].connect(self.minRandomizedRotationChange)
-        self.minRandomizedRotationLineEdit.editingFinished.connect(self.manualMinRotationEnteredEvent)
-        self.maxRandomizedRotationHorizontalSlider.valueChanged[int].connect(self.maxRandomizedRotationChange)
-        self.maxRandomizedRotationLineEdit.editingFinished.connect(self.manualMaxRotationEnteredEvent)
+        self.minRandomizedRotationHorizontalSlider.valueChanged[int].connect(
+            self.minRandomizedRotationChange)
+        self.minRandomizedRotationLineEdit.editingFinished.connect(
+            self.manualMinRotationEnteredEvent)
+        self.maxRandomizedRotationHorizontalSlider.valueChanged[int].connect(
+            self.maxRandomizedRotationChange)
+        self.maxRandomizedRotationLineEdit.editingFinished.connect(
+            self.manualMaxRotationEnteredEvent)
 
+        self.createGeometryPushButton.clicked.connect(
+            functools.partial(self.createGeometry))
 
-        self.createGeometryPushButton.clicked.connect(functools.partial(self.createGeometry))
-
-        self.deleteLocatorsPushButton.clicked.connect(functools.partial(self.deleteLocators))
+        self.deleteLocatorsPushButton.clicked.connect(
+            functools.partial(self.deleteLocators))
 
         self.browsePushButton.clicked.connect(self.findFile)
 
         self.importPushButton.clicked.connect(self.importFile)
 
-    
-
     def percentageChange(self, value):
         """ Changes the percentage number to mirror the slider.
             @param value: numbers 1-100
-
         """
 
         floatValue = float(value)
         self.percentageGeneratedLineEdit.setText(str(floatValue))
         self.scaleValue = floatValue
 
-
     def manualPercentageEnteredEvent(self):
         """ Forces the slider to mirror the value when a manual percentage is entered.
         """
-        
+
         userInputScale = float(self.percentageGeneratedLineEdit.text())
 
         if userInputScale < 1.0:
@@ -348,7 +385,6 @@ class ObjectDuplicator(QtGui.QDialog):
         
         self.percentageGeneratedHorizontalSlider.setValue(self.scaleValue)
 
-
     def scaleChange(self, value):
         """ Changes the scale number to mirror the slider.
         """
@@ -356,7 +392,6 @@ class ObjectDuplicator(QtGui.QDialog):
         floatValue = float(value)
         self.scaleLineEdit.setText(str(floatValue))
         self.scaleValue = floatValue
-
 
     def manualScaleEnteredEvent(self):
         """ Forces the slider to mirror the value when a manual scale is entered.
@@ -383,7 +418,6 @@ class ObjectDuplicator(QtGui.QDialog):
         else:
             self.randomizedScale = False
 
-
     def disableMainScaleSlider(self):
         """ Disables main scale slider.
         """
@@ -395,7 +429,6 @@ class ObjectDuplicator(QtGui.QDialog):
             self.scaleLineEdit.setDisabled(False)
             self.scaleHorizontalSlider.setDisabled(False)
 
-
     def minRandomizedScaleChange(self, value):
         """ Changes the minimum scale number to mirror the slider.
         """
@@ -404,7 +437,6 @@ class ObjectDuplicator(QtGui.QDialog):
         self.minRandomizedScaleLineEdit.setText(str(floatValue))
         self.scaleValue = floatValue
 
-
     def maxRandomizedScaleChange(self, value):
         """ Changes the maximum scale number to mirror the slider.
         """
@@ -412,11 +444,10 @@ class ObjectDuplicator(QtGui.QDialog):
         self.maxRandomizedScaleLineEdit.setText(str(floatValue))
         self.scaleValue = floatValue
 
-
     def manualMinScaleEnteredEvent(self):
         """ Forces the slider to mirror the value when a manual minimum scale is entered.
         """
-        
+
         userInputScale = float(self.minRandomizedScaleLineEdit.text())
 
         if userInputScale < 1.0:
@@ -425,13 +456,13 @@ class ObjectDuplicator(QtGui.QDialog):
             self.scaleValue = 100.0
         else:
             self.scaleValue = userInputScale
-        
+
         self.minRandomizedScaleValueHorizontalSlider.setValue(self.scaleValue)
 
     def manualMaxScaleEnteredEvent(self):
         """" Forces the slider to mirror the value when a manual maximum scale is entered.
         """
-        
+
         userInputScale = float(self.maxRandomizedScaleLineEdit.text())
 
         if userInputScale < 1.0:
@@ -440,18 +471,47 @@ class ObjectDuplicator(QtGui.QDialog):
             self.scaleValue = 100.0
         else:
             self.scaleValue = userInputScale
-        
-        self.maxRandomizedScaleValueHorizontalSlider.setValue(self.scaleValue)
 
+        self.maxRandomizedScaleValueHorizontalSlider.setValue(self.scaleValue)
 
     def setScaleMinMaxValues(self):
         """ Captures minimum and maximum scale values.
         """
-        self.minScaleValue = int(round(float(self.minRandomizedScaleLineEdit.text())))
-        self.maxScaleValue = int(round(float(self.maxRandomizedScaleLineEdit.text())))
+        self.minScaleValue = int(round(float(
+            self.minRandomizedScaleLineEdit.text())))
+        self.maxScaleValue = int(round(float(
+            self.maxRandomizedScaleLineEdit.text())))
         if (self.minScaleValue >= self.maxScaleValue):
             _logger.error("Minimum value must be smaller than maximum value.")
             return
+
+    def disableRotationCheckBoxes(self):
+        """ Disables rotation check boxes if set
+            to normals is on.
+        """
+
+        if self.setRotationToNormals.isChecked():
+            self.randomizeAllRotationCheckBox.setDisabled(True)
+            self.randomizeRotateXCheckBox.setDisabled(True)
+            self.randomizeRotateYCheckBox.setDisabled(True)
+            self.randomizeRotateZCheckBox.setDisabled(True)
+            self.minRandomizedRotationLineEdit.setDisabled(True)
+            self.minRandomizedRotationHorizontalSlider.setDisabled(True)
+            self.maxRandomizedRotationLineEdit.setDisabled(True)
+            self.maxRandomizedRotationHorizontalSlider.setDisabled(True)
+        else:
+            self.randomizeAllRotationCheckBox.setDisabled(False)
+            self.randomizeRotateXCheckBox.setDisabled(False)
+            self.randomizeRotateYCheckBox.setDisabled(False)
+            self.randomizeRotateZCheckBox.setDisabled(False)
+            self.minRandomizedRotationLineEdit.setDisabled.setDisabled(False)
+            self.minRandomizedRotationHorizontalSlider.setDisabled(False)
+            self.maxRandomizedRotationLineEdit.setDisabled(False)
+            self.maxRandomizedRotationHorizontalSlider.setDisabled(False)
+
+    def checkNormalsRotationBoxesState(self):
+        if self.setRotationToNormals.isChecked():
+            self.setRotationToNormals = True
 
     def checkAllRotationBoxState(self):
         """ Automatically checks all other rotation boxes if master rotation box is on
@@ -461,7 +521,6 @@ class ObjectDuplicator(QtGui.QDialog):
             self.randomizeRotateXCheckBox.click()
             self.randomizeRotateYCheckBox.click()
             self.randomizeRotateZCheckBox.click()
-
 
     def checkRotationBoxesStates(self):
         """ Activates various rotations if checked.
@@ -482,7 +541,6 @@ class ObjectDuplicator(QtGui.QDialog):
         if self.randomizeRotateZCheckBox.isChecked():
             self.randomizeZ = True
             self.setMinMaxRotationValues()
-            
 
     def minRandomizedRotationChange(self, value):
         """ Changes the minimum rotation number to mirror the slider.
@@ -492,8 +550,6 @@ class ObjectDuplicator(QtGui.QDialog):
         self.minRandomizedRotationLineEdit.setText(str(floatValue))
         self.scaleValue = floatValue
 
-
-
     def maxRandomizedRotationChange(self, value):
         """ Changes the maximum rotation number to mirror the slider.
         """
@@ -501,12 +557,11 @@ class ObjectDuplicator(QtGui.QDialog):
         self.maxRandomizedRotationLineEdit.setText(str(floatValue))
         self.scaleValue = floatValue
 
-
-
     def manualMinRotationEnteredEvent(self):
-        """ Forces the slider to mirror the value when a manual minimum rotation is entered.
+        """ Forces the slider to mirror the value
+            when a manual minimum rotation is entered.
         """
-        
+
         userInputScale = float(self.minRandomizedRotationLineEdit.text())
 
         if userInputScale < -100.0:
@@ -515,15 +570,14 @@ class ObjectDuplicator(QtGui.QDialog):
             self.scaleValue = 100.0
         else:
             self.scaleValue = userInputScale
-        
+
         self.minRandomizedRotationHorizontalSlider.setValue(self.scaleValue)
 
-
-
     def manualMaxRotationEnteredEvent(self):
-        """" Forces the slider to mirror the value when a manual maximum rotation is entered.
+        """" Forces the slider to mirror the value when a
+             manual maximum rotation is entered.
         """
-        
+
         userInputScale = float(self.maxRandomizedRotationLineEdit.text())
 
         if userInputScale < -100:
@@ -535,18 +589,17 @@ class ObjectDuplicator(QtGui.QDialog):
         
         self.maxRandomizedRotationHorizontalSlider.setValue(self.scaleValue)
 
-
-
     def setMinMaxRotationValues(self):
         """ Capture minimum and maximum rotation values from user
         """
 
-        self.minRotationValue = int(round(float(self.minRandomizedRotationLineEdit.text())))
-        self.maxRotationValue = int(round(float(self.maxRandomizedRotationLineEdit.text())))
+        self.minRotationValue = int(round(float(
+            self.minRandomizedRotationLineEdit.text())))
+        self.maxRotationValue = int(round(float(
+            self.maxRandomizedRotationLineEdit.text())))
         if (self.minRotationValue >= self.maxRotationValue):
             _logger.error("Minimum value must be smaller than maximum value.")
             return
-
 
     def createGeometry(self):
         """ Calls main function to create objects at various vertices and locators.
@@ -558,10 +611,12 @@ class ObjectDuplicator(QtGui.QDialog):
         self.checkScaleBoxState()
         self.checkRotationBoxesStates()
         
-        self.makeLocators(numberGenerated, name, scaleValue, self.randomizedScale, self.minScaleValue, self.maxScaleValue, 
-            self.randomizedRotation, self.randomizeX, self.randomizeY, self.randomizeZ, self.minRotationValue, self.maxRotationValue)
-
-
+        self.makeLocators(
+            numberGenerated, name, scaleValue, self.randomizedScale,
+            self.minScaleValue, self.maxScaleValue,
+            self.setRotationToNormals, self.randomizedRotation,
+            self.randomizeX, self.randomizeY,
+            self.randomizeZ, self.minRotationValue, self.maxRotationValue)
 
     def deleteLocators(self):
         """ Deleted all locators made from UI.
@@ -571,21 +626,18 @@ class ObjectDuplicator(QtGui.QDialog):
         allFaceLocs = pm.ls('faceLoc*')
         pm.delete(allVertexLocs, allFaceLocs)
 
-
     def findFile(self):
-        """ Opens browser to find a file. 
+        """ Opens browser to find a file.
         """
 
-
         fileName = None
-        dialog = QtGui.QFileDialog(directory = os.path.dirname(__file__))
+        dialog = QtGui.QFileDialog(directory=os.path.dirname(__file__))
 
         if dialog.exec_():
             fileName = dialog.selectedFiles()
 
         if fileName:
             self.fileNameLineEdit.setText(fileName[0])
-
 
     def importFile(self):
         """ Imports selected file.
@@ -594,14 +646,14 @@ class ObjectDuplicator(QtGui.QDialog):
         fileToImport = self.fileNameLineEdit.text()
         mc.file(fileToImport, i=True, iv=True, mnc=False)
 
-
-
     @stopwatch
-    def makeLocators(self, num= None, nameOfSurface = None, scaleOfItems = None, randomScale = None, minRandomScale = None, 
-        maxRandomScale = None, randomRotation = None, randomX = None, randomY = None, 
-        randomZ = None, minRandomRotation = None, maxRandomRotation = None):
-        
-        """ Populates a given surface with objects. 
+    def makeLocators(
+        self, num=None, nameOfSurface=None, scaleOfItems=None,
+        randomScale=None, minRandomScale=None, maxRandomScale=None,
+        setToNormals=None, randomRotation=None, randomX=None, randomY=None,
+            randomZ=None, minRandomRotation=None, maxRandomRotation=None):
+
+        """ Populates a given surface with objects.
             @param num: fl, percentage of geometry to be covered
             @param nameOfsurface: str, name given by user to determine the surface
             @param scaleOfItems: int, scale of items being duplicated
@@ -614,11 +666,8 @@ class ObjectDuplicator(QtGui.QDialog):
             @param randomZ: bool, randomizes the Z rotation between a range of minimum and maximum values
             @param minRandomRotation: int, minimum rotation of object
             @param maxRandomRotation: int, maximum rotation of object
-
-
-        
         """
-        
+
         selectedObject = pm.ls(sl=True)
         sizeOfSelectedObject = int(pm.getAttr(selectedObject[0] + '.scaleY'))
         boundingBox = pm.exactWorldBoundingBox(selectedObject)
@@ -629,34 +678,35 @@ class ObjectDuplicator(QtGui.QDialog):
         pm.parentConstraint(nameOfSurface, selectedObject, mo=False)
         pm.delete(selectedObject, cn=True)
 
-        
-
         def vertLocators():
             """ Iterates through vertices on surface, attaches locators and objects
             """
-            
+
             # Selects all vertices, puts all vertice coordinates in a list
             pm.select(nameOfSurface)
             vs = pm.polyEvaluate(v=True)
-            verts = [] 
-            vertLocCount = 0 
-            for i in range(0,vs):
-                verts += (pm.pointPosition(nameOfSurface + '.vtx['+ str(i) + ']'), )
+            verts = []
+            vertLocCount = 0
+            for i in range(0, vs):
+                verts += (pm.pointPosition(nameOfSurface + '.vtx[' + str(i) + ']'), )
 
             # Creates locators
             for v in verts:
                 numGen = r.random() 
                 if (numGen <= num):
-                    pm.spaceLocator(n="vertexLoc{0}".format(1), p=(v[0],v[1],v[2]))
-                    duplicatedObject = pm.instance(selectedObject, leaf = True)
-                    pm.setAttr(duplicatedObject[0] + '.translate', (v[0],v[1],v[2]))
+                    pm.spaceLocator(n="vertexLoc{0}".format(1), p=(v[0], v[1], v[2]))
+                    duplicatedObject = pm.instance(selectedObject, leaf=True)
+                    pm.setAttr(duplicatedObject[0] + '.translate', (v[0], v[1], v[2]))
                     randomScaleNumber = r.randrange(minRandomScale, maxRandomScale)
                     randomRotationNumber = r.randrange(minRandomRotation, maxRandomRotation)
 
                     if randomScale == True:
                         pm.setAttr(duplicatedObject[0] + '.scale', randomScaleNumber, randomScaleNumber, randomScaleNumber)
 
-                    if randomRotation == True:      
+                    if setToNormals == True:
+                        print("Set Object to Vertex Normals Now")
+
+                    if randomRotation == True:
                         pm.setAttr(duplicatedObject[0] + '.rotate', randomRotationNumber, randomRotationNumber, randomRotationNumber)
 
                     if randomX == True:
@@ -667,23 +717,20 @@ class ObjectDuplicator(QtGui.QDialog):
 
                     if randomZ == True:
                         pm.setAttr(duplicatedObject[0] + '.rotateZ', randomRotationNumber)
-                    
 
                     vertLocCount += 1
 
-
             totalVerts = round(float(vertLocCount)/vs*100.0, 2)
             _logger.debug("Generated " + str(vertLocCount) + " locators at vertices for " + str(vs) + " possible vertices. (" + str(totalVerts) + "%) ")
-        
-        
+
         def faceLocators():
             """ Iterates through faces on surface, attaches locators and objects
             """
-            
+
             # Selects all faces, puts average center coordinates in a list
             pm.select(nameOfSurface)
             fc = pm.polyEvaluate(face=True)
-            faceLocCount=0
+            faceLocCount = 0
             for x in range(0, fc):
                 numGen = r.random()
                 bBox = pm.xform(nameOfSurface + '.f['+str(x)+']', ws=True, q=True, bb=True)
@@ -691,7 +738,6 @@ class ObjectDuplicator(QtGui.QDialog):
                 transY = (bBox[1] + bBox[4])/2
                 transZ = (bBox[2] + bBox[5])/2
 
-                
                 # Creates locators
                 if (numGen <= num):
                     pm.spaceLocator(n="faceLoc{0}".format(1), p=(transX, transY, transZ))
@@ -703,7 +749,10 @@ class ObjectDuplicator(QtGui.QDialog):
                     if randomScale == True:
                         pm.setAttr(duplicatedObject[0] + '.scale', randomScaleNumber, randomScaleNumber, randomScaleNumber)
 
-                    if randomRotation == True:      
+                    if setToNormals == True:
+                        print("Set Object to Face Normals Now")
+
+                    if randomRotation == True:
                         pm.setAttr(duplicatedObject[0] + '.rotate', randomRotationNumber, randomRotationNumber, randomRotationNumber)
 
                     if randomX == True:
@@ -714,15 +763,12 @@ class ObjectDuplicator(QtGui.QDialog):
 
                     if randomZ == True:
                         pm.setAttr(duplicatedObject[0] + '.rotateZ', randomRotationNumber)
-                    
-                    
-                    faceLocCount += 1
 
+                    faceLocCount += 1
 
             totalFace = round(float(faceLocCount)/fc*100.0, 2)
             _logger.debug("Generated " + str(faceLocCount) + " locators at faces for " + str(fc) + " possible surfaces.(" + str(totalFace) + "%) ")
-                    
-                    
+
         if (num < 0.01 or num > 10.0):
             _logger.error("Error. Please input a number between 1 and 100")
         elif (pm.objExists(nameOfSurface) == False):
@@ -730,10 +776,3 @@ class ObjectDuplicator(QtGui.QDialog):
         else:
             vertLocators()
             faceLocators()
-        
-            
-            
-    
-
-
-    
