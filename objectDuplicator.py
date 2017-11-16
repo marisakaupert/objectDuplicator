@@ -261,6 +261,9 @@ class ObjectDuplicator(QtGui.QDialog):
         self.deleteLocatorsPushButton = QtGui.QPushButton("Delete Locators")
         self.verticalLayout.addWidget(self.deleteLocatorsPushButton)
 
+        self.deleteObjectsPushButton = QtGui.QPushButton("Delete Duplicated Objects")
+        self.verticalLayout.addWidget(self.deleteObjectsPushButton)
+
         self.verticalLayout_2.addLayout(self.verticalLayout)
         self.verticalLayout_3 = QtGui.QVBoxLayout()
         self.verticalLayout_3.setContentsMargins(0, 0, 0, 0)
@@ -672,7 +675,7 @@ class ObjectDuplicator(QtGui.QDialog):
         sizeOfSelectedObject = int(pm.getAttr(selectedObject[0] + '.scaleY'))
         boundingBox = pm.exactWorldBoundingBox(selectedObject)
         bottom = [(boundingBox[0] + boundingBox[3])/2, boundingBox[1], (boundingBox[2] + boundingBox[5])/2]
-        pm.xform(selectedObject, piv=bottom, ws=True)
+        pm.xform(selectedObject, piv=bottom, ws=True)    #TODO: Look at this to see if I want to change it
         pm.select(nameOfSurface)
         pm.select(selectedObject, add=True)
         pm.parentConstraint(nameOfSurface, selectedObject, mo=False)
@@ -700,22 +703,29 @@ class ObjectDuplicator(QtGui.QDialog):
                     randomScaleNumber = r.randrange(minRandomScale, maxRandomScale)
                     randomRotationNumber = r.randrange(minRandomRotation, maxRandomRotation)
 
-                    if randomScale == True:
+                    if randomScale is True:
                         pm.setAttr(duplicatedObject[0] + '.scale', randomScaleNumber, randomScaleNumber, randomScaleNumber)
 
-                    if setToNormals == True:
-                        print("Set Object to Vertex Normals Now")
+                    if setToNormals is True:
+                        radians = math.atan2(v[1], v[0])
+                        degrees = radians * (180 / math.pi)
+                        sin = math.sin(degrees)
+                        cos = math.cos(degrees)
+                        rotationX = v[0] + (v[1]*cos) + (-1*v[2]*sin) + (v[1]*sin) + (v[2]*cos)
+                        rotationY = (v[0]*cos) + (v[2]*sin) + v[1] + (-1*v[0]*sin) + (v[2]*cos)
+                        rotationZ = (v[0]*cos) + (-1*v[1]*sin) + (v[0]*sin) + (v[1]*cos) + v[2]
+                        pm.setAttr(duplicatedObject[0] + '.rotate', (rotationX, rotationY, rotationZ))
 
-                    if randomRotation == True:
+                    if randomRotation is True:
                         pm.setAttr(duplicatedObject[0] + '.rotate', randomRotationNumber, randomRotationNumber, randomRotationNumber)
 
-                    if randomX == True:
+                    if randomX is True:
                         pm.setAttr(duplicatedObject[0] + '.rotateX', randomRotationNumber)
 
-                    if randomY == True:
+                    if randomY is True:
                         pm.setAttr(duplicatedObject[0] + '.rotateY', randomRotationNumber)
 
-                    if randomZ == True:
+                    if randomZ is True:
                         pm.setAttr(duplicatedObject[0] + '.rotateZ', randomRotationNumber)
 
                     vertLocCount += 1
@@ -746,22 +756,29 @@ class ObjectDuplicator(QtGui.QDialog):
                     randomScaleNumber = r.randrange(minRandomScale, maxRandomScale)
                     randomRotationNumber = r.randrange(minRandomRotation, maxRandomRotation)
 
-                    if randomScale == True:
+                    if randomScale is True:
                         pm.setAttr(duplicatedObject[0] + '.scale', randomScaleNumber, randomScaleNumber, randomScaleNumber)
 
-                    if setToNormals == True:
-                        print("Set Object to Face Normals Now")
+                    if setToNormals is True:
+                        radians = math.atan2(transY, transX)
+                        degrees = radians * (180 / math.pi)
+                        sin = math.sin(degrees)
+                        cos = math.cos(degrees)
+                        rotationX = transX + (transY*cos) + (-1*transZ*sin) + (transY*sin) + (transZ*cos)
+                        rotationY = (transX*cos) + (transZ*sin) + transY + (-1*transX*sin) + (transZ*cos)
+                        rotationZ = (transX*cos) + (-1*transY*sin) + (transX*sin) + (transY*cos) + transZ
+                        pm.setAttr(duplicatedObject[0] + '.rotate', (rotationX, rotationY, rotationZ))
 
-                    if randomRotation == True:
+                    if randomRotation is True:
                         pm.setAttr(duplicatedObject[0] + '.rotate', randomRotationNumber, randomRotationNumber, randomRotationNumber)
 
-                    if randomX == True:
+                    if randomX is True:
                         pm.setAttr(duplicatedObject[0] + '.rotateX', randomRotationNumber)
 
-                    if randomY == True:
+                    if randomY is True:
                         pm.setAttr(duplicatedObject[0] + '.rotateY', randomRotationNumber)
 
-                    if randomZ == True:
+                    if randomZ is True:
                         pm.setAttr(duplicatedObject[0] + '.rotateZ', randomRotationNumber)
 
                     faceLocCount += 1
@@ -771,7 +788,7 @@ class ObjectDuplicator(QtGui.QDialog):
 
         if (num < 0.01 or num > 10.0):
             _logger.error("Error. Please input a number between 1 and 100")
-        elif (pm.objExists(nameOfSurface) == False):
+        elif (pm.objExists(nameOfSurface) is False):
             _logger.error("Error. Enter a name of a plane that exists in your project.")
         else:
             vertLocators()
