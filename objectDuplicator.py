@@ -14,6 +14,7 @@ from PySide import QtGui, QtCore, QtUiTools
 from shiboken import wrapInstance
 import maya.cmds as mc
 import pymel.core as pm
+from pymel.all import *
 import maya.OpenMayaUI as omui 
 
 
@@ -707,14 +708,16 @@ class ObjectDuplicator(QtGui.QDialog):
                         pm.setAttr(duplicatedObject[0] + '.scale', randomScaleNumber, randomScaleNumber, randomScaleNumber)
 
                     if setToNormals is True:
-                        radians = math.atan2(v[1], v[0])
-                        degrees = radians * (180 / math.pi)
-                        sin = math.sin(degrees)
-                        cos = math.cos(degrees)
-                        rotationX = v[0] + (v[1]*cos) + (-1*v[2]*sin) + (v[1]*sin) + (v[2]*cos)
-                        rotationY = (v[0]*cos) + (v[2]*sin) + v[1] + (-1*v[0]*sin) + (v[2]*cos)
-                        rotationZ = (v[0]*cos) + (-1*v[1]*sin) + (v[0]*sin) + (v[1]*cos) + v[2]
-                        pm.setAttr(duplicatedObject[0] + '.rotate', (rotationX, rotationY, rotationZ))
+                        poly = PyNode(nameOfSurface)
+                        pos = [v[0], v[1], v[2]]
+                        count = 0
+                        for point in poly.getPoints('world'):
+                            if dt.Vector(point) == dt.Vector(pos):
+                                poly = PyNode(nameOfSurface + '.vtx[' + str(count) + ']')
+                                radians_normals = poly.getNormal()
+                                degrees = radians_normals * 180/math.pi
+                                print(degrees)
+                            count += 1
 
                     if randomRotation is True:
                         pm.setAttr(duplicatedObject[0] + '.rotate', randomRotationNumber, randomRotationNumber, randomRotationNumber)
@@ -760,14 +763,10 @@ class ObjectDuplicator(QtGui.QDialog):
                         pm.setAttr(duplicatedObject[0] + '.scale', randomScaleNumber, randomScaleNumber, randomScaleNumber)
 
                     if setToNormals is True:
-                        radians = math.atan2(transY, transX)
-                        degrees = radians * (180 / math.pi)
-                        sin = math.sin(degrees)
-                        cos = math.cos(degrees)
-                        rotationX = transX + (transY*cos) + (-1*transZ*sin) + (transY*sin) + (transZ*cos)
-                        rotationY = (transX*cos) + (transZ*sin) + transY + (-1*transX*sin) + (transZ*cos)
-                        rotationZ = (transX*cos) + (-1*transY*sin) + (transX*sin) + (transY*cos) + transZ
-                        pm.setAttr(duplicatedObject[0] + '.rotate', (rotationX, rotationY, rotationZ))
+                        poly = PyNode(nameOfSurface + '.f[' + str(x) + ']')
+                        radians_normals = poly.getNormal()
+                        degrees = radians_normals * 180/math.pi
+                        print(degrees)
 
                     if randomRotation is True:
                         pm.setAttr(duplicatedObject[0] + '.rotate', randomRotationNumber, randomRotationNumber, randomRotationNumber)
