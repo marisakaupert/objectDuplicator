@@ -12,8 +12,8 @@ import time
 
 import os
 import functools
-from PySide import QtGui, QtCore, QtUiTools
-from shiboken import wrapInstance
+from PySide2 import QtGui, QtCore, QtUiTools, QtWidgets
+from shiboken2 import wrapInstance
 # import pyside_dynamic
 import pymel.core as pm
 import maya.OpenMayaUI as omui 
@@ -28,7 +28,7 @@ def getMayaWindow():
     """
     ptr = omui.MQtUtil.mainWindow()
     if ptr :
-        return wrapInstance(long(ptr), QtGui.QMainWindow)
+        return wrapInstance(long(ptr), QtWidgets.QMainWindow)
 
 
 def run():
@@ -59,7 +59,7 @@ def stopwatch(func):
 
 
 
-class MakeEffects(QtGui.QDialog):
+class MakeEffects(QtWidgets.QMainWindow):
     """ This is the main class of this module """
 
     def __init__(self, parent=None):
@@ -69,97 +69,98 @@ class MakeEffects(QtGui.QDialog):
 
 
         # from pysideuic--------------------------------------------
-        self.gridLayout = QtGui.QGridLayout()
+        self.setCentralWidget(QtWidgets.QWidget(self))
+        self.gridLayout = QtWidgets.QGridLayout()
 
-        self.verticalLayout_2 = QtGui.QVBoxLayout()
+        self.verticalLayout_2 = QtWidgets.QVBoxLayout()
         self.verticalLayout_2.setContentsMargins(5, 5, 5, 5)
 
-        self.instructionsLabel = QtGui.QLabel("To use tool, enter name of surface you want objects duplicated on below and then select objects to duplicated. Press button to create geometry.")
+        self.instructionsLabel = QtWidgets.QLabel("To use tool, enter name of surface you want objects duplicated on below and then select objects to duplicated. Press button to create geometry.")
         self.instructionsLabel.setAlignment(QtCore.Qt.AlignCenter)
         self.instructionsLabel.setWordWrap(True)
 
         self.verticalLayout_2.addWidget(self.instructionsLabel)
-        self.horizontalLayout = QtGui.QHBoxLayout()
+        self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setContentsMargins(5, 5, 5, 5)
 
-        self.nameOfSurfaceLabel = QtGui.QLabel("Name of Surface: ")
+        self.nameOfSurfaceLabel = QtWidgets.QLabel("Name of Surface: ")
 
         self.horizontalLayout.addWidget(self.nameOfSurfaceLabel)
-        self.nameOfSurfaceLineEdit = QtGui.QLineEdit()
+        self.nameOfSurfaceLineEdit = QtWidgets.QLineEdit()
 
         self.horizontalLayout.addWidget(self.nameOfSurfaceLineEdit)
         self.verticalLayout_2.addLayout(self.horizontalLayout)
-        self.horizontalLayout_2 = QtGui.QHBoxLayout()
+        self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_2.setContentsMargins(5, 5, 5, 5)
 
-        self.percentageGeneratedLabel = QtGui.QLabel("Percentage Generated (must be between 1 and 10): ")
+        self.percentageGeneratedLabel = QtWidgets.QLabel("Percentage Generated (must be between 1 and 10): ")
 
         self.horizontalLayout_2.addWidget(self.percentageGeneratedLabel)
-        self.percentageGeneratedLineEdit = QtGui.QLineEdit("1.0")
+        self.percentageGeneratedLineEdit = QtWidgets.QLineEdit("1.0")
 
         self.horizontalLayout_2.addWidget(self.percentageGeneratedLineEdit)
-        self.percentageGeneratedHorizontalSlider = QtGui.QSlider()
+        self.percentageGeneratedHorizontalSlider = QtWidgets.QSlider()
         self.percentageGeneratedHorizontalSlider.setMinimum(1)
         self.percentageGeneratedHorizontalSlider.setMaximum(100)
         self.percentageGeneratedHorizontalSlider.setOrientation(QtCore.Qt.Horizontal)
 
         self.horizontalLayout_2.addWidget(self.percentageGeneratedHorizontalSlider)
         self.verticalLayout_2.addLayout(self.horizontalLayout_2)
-        self.horizontalLayout_4 = QtGui.QHBoxLayout()
+        self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_4.setContentsMargins(10, 10, 10, 10)
 
-        self.scaleLabel = QtGui.QLabel("Scale (must be between 1 and 10): ")
+        self.scaleLabel = QtWidgets.QLabel("Scale (must be between 1 and 10): ")
 
         self.horizontalLayout_4.addWidget(self.scaleLabel)
-        self.scaleLineEdit = QtGui.QLineEdit("1.0")
+        self.scaleLineEdit = QtWidgets.QLineEdit("1.0")
 
         self.horizontalLayout_4.addWidget(self.scaleLineEdit)
-        self.scaleHorizontalSlider = QtGui.QSlider()
+        self.scaleHorizontalSlider = QtWidgets.QSlider()
         self.scaleHorizontalSlider.setMinimum(1)
         self.scaleHorizontalSlider.setMaximum(100)
         self.scaleHorizontalSlider.setOrientation(QtCore.Qt.Horizontal)
 
         self.horizontalLayout_4.addWidget(self.scaleHorizontalSlider)
         self.verticalLayout_2.addLayout(self.horizontalLayout_4)
-        self.horizontalLayout_5 = QtGui.QHBoxLayout()
+        self.horizontalLayout_5 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_5.setContentsMargins(5, 5, 5, 5)
 
-        self.randomizeScaleCheckBox = QtGui.QCheckBox("Randomize Scale")
+        self.randomizeScaleCheckBox = QtWidgets.QCheckBox("Randomize Scale")
 
         self.horizontalLayout_5.addWidget(self.randomizeScaleCheckBox)
-        self.turnOffRandomizedRotationCheckBox = QtGui.QCheckBox("Turn Off Randomized Rotation")
+        self.turnOffRandomizedRotationCheckBox = QtWidgets.QCheckBox("Turn Off Randomized Rotation")
 
         self.horizontalLayout_5.addWidget(self.turnOffRandomizedRotationCheckBox)
         self.verticalLayout_2.addLayout(self.horizontalLayout_5)
-        self.verticalLayout_4 = QtGui.QVBoxLayout()
+        self.verticalLayout_4 = QtWidgets.QVBoxLayout()
         self.verticalLayout_4.setContentsMargins(5, 5, 5, 5)
 
-        self.horizontalLayout_3 = QtGui.QHBoxLayout()
+        self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_3.setContentsMargins(5, 5, 5, 5)
 
-        self.minRandomizedScaleValueLabel = QtGui.QLabel("Minimum Scale: ")
+        self.minRandomizedScaleValueLabel = QtWidgets.QLabel("Minimum Scale: ")
 
         self.horizontalLayout_3.addWidget(self.minRandomizedScaleValueLabel)
-        self.minRandomizedScaleLineEdit = QtGui.QLineEdit("1.0")
+        self.minRandomizedScaleLineEdit = QtWidgets.QLineEdit("1.0")
 
         self.horizontalLayout_3.addWidget(self.minRandomizedScaleLineEdit)
-        self.minRandomizedScaleValueHorizontalSlider = QtGui.QSlider()
+        self.minRandomizedScaleValueHorizontalSlider = QtWidgets.QSlider()
         self.minRandomizedScaleValueHorizontalSlider.setMinimum(1)
         self.minRandomizedScaleValueHorizontalSlider.setMaximum(100)
         self.minRandomizedScaleValueHorizontalSlider.setOrientation(QtCore.Qt.Horizontal)
 
         self.horizontalLayout_3.addWidget(self.minRandomizedScaleValueHorizontalSlider)
         self.verticalLayout_4.addLayout(self.horizontalLayout_3)
-        self.horizontalLayout_6 = QtGui.QHBoxLayout()
+        self.horizontalLayout_6 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_6.setContentsMargins(5, 5, 5, 5)
 
-        self.maxRandomizedScaleValueLabel = QtGui.QLabel("Maximum Scale:")
+        self.maxRandomizedScaleValueLabel = QtWidgets.QLabel("Maximum Scale:")
 
         self.horizontalLayout_6.addWidget(self.maxRandomizedScaleValueLabel)
-        self.maxRandomizedScaleLineEdit = QtGui.QLineEdit("1.0")
+        self.maxRandomizedScaleLineEdit = QtWidgets.QLineEdit("1.0")
 
         self.horizontalLayout_6.addWidget(self.maxRandomizedScaleLineEdit)
-        self.maxRandomizedScaleValueHorizontalSlider = QtGui.QSlider()
+        self.maxRandomizedScaleValueHorizontalSlider = QtWidgets.QSlider()
         self.maxRandomizedScaleValueHorizontalSlider.setMinimum(1)
         self.maxRandomizedScaleValueHorizontalSlider.setMaximum(100)
         self.maxRandomizedScaleValueHorizontalSlider.setOrientation(QtCore.Qt.Horizontal)
@@ -167,26 +168,26 @@ class MakeEffects(QtGui.QDialog):
         self.horizontalLayout_6.addWidget(self.maxRandomizedScaleValueHorizontalSlider)
         self.verticalLayout_4.addLayout(self.horizontalLayout_6)
         self.verticalLayout_2.addLayout(self.verticalLayout_4)
-        self.verticalLayout = QtGui.QVBoxLayout()
+        self.verticalLayout = QtWidgets.QVBoxLayout()
         self.verticalLayout.setContentsMargins(5, 5, 5, 5)
 
-        self.createGeometryPushButton = QtGui.QPushButton("Create Locators and Geometry")
+        self.createGeometryPushButton = QtWidgets.QPushButton("Create Locators and Geometry")
 
         self.verticalLayout.addWidget(self.createGeometryPushButton)
-        self.deleteLocatorsPushButton = QtGui.QPushButton("Delete Locators")
+        self.deleteLocatorsPushButton = QtWidgets.QPushButton("Delete Locators")
 
         self.verticalLayout.addWidget(self.deleteLocatorsPushButton)
-        self.emptyScenePushButton = QtGui.QPushButton("Empty Scene")
+        self.emptyScenePushButton = QtWidgets.QPushButton("Empty Scene")
 
         self.verticalLayout.addWidget(self.emptyScenePushButton)
         self.verticalLayout_2.addLayout(self.verticalLayout)
-        self.verticalLayout_3 = QtGui.QVBoxLayout()
+        self.verticalLayout_3 = QtWidgets.QVBoxLayout()
         self.verticalLayout_3.setContentsMargins(5, 5, 5, 5)
 
-        self.itemsCreatedLabel = QtGui.QLabel("Items Created: ")
+        self.itemsCreatedLabel = QtWidgets.QLabel("Items Created: ")
 
         self.verticalLayout_3.addWidget(self.itemsCreatedLabel)
-        self.itemsCreatedListWidget = QtGui.QListWidget()
+        self.itemsCreatedListWidget = QtWidgets.QListWidget()
 
         self.verticalLayout_3.addWidget(self.itemsCreatedListWidget)
         self.verticalLayout_2.addLayout(self.verticalLayout_3)
@@ -195,7 +196,7 @@ class MakeEffects(QtGui.QDialog):
         self.makeConnections()
         self.initStateOfUI()
         self.setWindowTitle("Make Effects")
-        self.setLayout(self.gridLayout)
+        self.centralWidget().setLayout(self.gridLayout)
         self.show()
 
     def makeConnections(self):
@@ -237,31 +238,21 @@ class MakeEffects(QtGui.QDialog):
 
     def createGeometry(self):
         # numberGenerated = self.numberGeneratedLCDNumber.value()
-        numberGenerated = 1;
+        numberGenerated = 1
 
         name = self.nameOfSurfaceLineEdit.text()
 
         randomizedScale = False
 
         # scaleValue = self.scaleLCDNumber.value()
-        scaleValue = 1;
-
-        randomizedRotation = True
-        
+        scaleValue = 1
 
         if self.randomizeScaleCheckBox.isChecked():
             randomizedScale = True
         else:
             randomizedScale = False
 
-        if self.turnOffRandomizedRotationCheckBox.isChecked():
-            randomizedRotation = False
-        else:
-            randomizedRotation = True
-        
-        self.makeLocators(numberGenerated, name, scaleValue, randomizedScale, randomizedRotation)
-
-
+        self.makeLocators(numberGenerated, name, scaleValue, randomizedScale)
 
     def emptyScene(self):
         # pm.delete(all=True)
@@ -269,19 +260,12 @@ class MakeEffects(QtGui.QDialog):
 
         # self.itemsCreatedListWidget.append(listOfItemsMade)
 
-
-
     def initStateOfUI(self):
         self.nameOfSurfaceLineEdit.setPlaceholderText("Name of Geometry Here")
 
 
-
-
-
-
-
     @stopwatch
-    def makeLocators(self, num = None, nameOfSurface = None, scaleOfItems = None, randomScale = None, randomRotation = None):
+    def makeLocators(self, num=None, nameOfSurface=None, scaleOfItems=None, randomScale=None):
         
         """ Function to place random locators on a given name
         
@@ -332,12 +316,6 @@ class MakeEffects(QtGui.QDialog):
                         pm.setAttr(duplicatedObject[0] + '.scale', (scaleOfItems * numGen), (scaleOfItems * numGen), (scaleOfItems * numGen))
                     else:
                         pm.setAttr(duplicatedObject[0] + '.scale', scaleOfItems, scaleOfItems, scaleOfItems)
-
-                    if randomRotation == False:
-                        pm.setAttr(duplicatedObject[0] + '.rotateY', 0)
-                    else:
-                        pm.setAttr(duplicatedObject[0] + '.rotateY', (numGen * 100))
-
 
                     vertLocCount += 1
 
