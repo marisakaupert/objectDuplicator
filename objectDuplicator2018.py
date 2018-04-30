@@ -2,7 +2,6 @@
 
 import logging
 from collections import Counter
-import maya.cmds as pm
 import random as r
 import time
 import math
@@ -16,7 +15,7 @@ import maya.cmds as mc
 import pymel.core as pm
 from pymel.core.datatypes import Vector, Matrix, Point
 from pymel.all import *
-import maya.OpenMayaUI as omui
+import maya.OpenMaya as om
 
 _logger = logging.getLogger(__name__)
 _logger.setLevel(logging.DEBUG)
@@ -91,7 +90,7 @@ class ObjectDuplicator(QtWidgets.QMainWindow):
         self.randomizeY = False
         self.randomizeZ = False
 
-        self.setCentralWidget(QtWidgets.QWidget(self)) 
+        self.setCentralWidget(QtWidgets.QWidget(self))
         self.gridLayout = QtWidgets.QGridLayout()
 
         self.verticalLayout_2 = QtWidgets.QVBoxLayout()
@@ -698,7 +697,6 @@ class ObjectDuplicator(QtWidgets.QMainWindow):
             # Creates locators
             for v in verts:
                 numGen = r.random()
-                print(v, v.getRotation())
                 if (numGen <= num):
                     pm.spaceLocator(n="vertexLoc{0}".format(1), p=(v[0], v[1], v[2]))
                     duplicatedObject = pm.instance(selectedObject, leaf=True)
@@ -710,15 +708,20 @@ class ObjectDuplicator(QtWidgets.QMainWindow):
                         pm.setAttr(duplicatedObject[0] + '.scale', randomScaleNumber, randomScaleNumber, randomScaleNumber)
 
                     if setToNormals is True:
-                        poly = PyNode(nameOfSurface)
-                        pos = [v[0], v[1], v[2]]
-                        count = 0
-                        for point in poly.getPoints('world'):
-                            if dt.Vector(point) == dt.Vector(pos):
-                                poly = PyNode(nameOfSurface + '.vtx[' + str(count) + ']')
-                                normalVector = poly.getNormal()
-                                print("normals: {0}".format(normalVector))
-                            count += 1
+                        print(v)
+                        rotOrder = mc.getAttr(nameOfSurface + '.rotateOrder')
+                        pointOrigin = 0
+                        originalPosition = om.MVector(v)
+                        print(originalPosition)
+                        # poly = PyNode(nameOfSurface)
+                        # pos = [v[0], v[1], v[2]]
+                        # count = 0
+                        # for point in poly.getPoints('world'):
+                        #     if dt.Vector(point) == dt.Vector(pos):
+                        #         poly = PyNode(nameOfSurface + '.vtx[' + str(count) + ']')
+                        #         normalVector = poly.getNormal()
+                        #         print("normals: {0}".format(normalVector))
+                        #     count += 1
 
                     if randomRotation is True:
                         pm.setAttr(duplicatedObject[0] + '.rotate', randomRotationNumber, randomRotationNumber, randomRotationNumber)

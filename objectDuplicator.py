@@ -14,9 +14,9 @@ from PySide import QtGui, QtCore, QtUiTools
 from shiboken import wrapInstance
 import maya.cmds as mc
 import pymel.core as pm
+from pymel.core.datatypes import Vector, Matrix, Point
 from pymel.all import *
-import maya.OpenMayaUI as omui 
-
+import maya.OpenMayaUI as omui
 
 _logger = logging.getLogger(__name__)
 _logger.setLevel(logging.DEBUG)
@@ -676,7 +676,7 @@ class ObjectDuplicator(QtGui.QDialog):
         sizeOfSelectedObject = int(pm.getAttr(selectedObject[0] + '.scaleY'))
         boundingBox = pm.exactWorldBoundingBox(selectedObject)
         bottom = [(boundingBox[0] + boundingBox[3])/2, boundingBox[1], (boundingBox[2] + boundingBox[5])/2]
-        pm.xform(selectedObject, piv=bottom, ws=True)    #TODO: Look at this to see if I want to change it
+        pm.xform(selectedObject, piv=bottom, ws=True)
         pm.select(nameOfSurface)
         pm.select(selectedObject, add=True)
         pm.parentConstraint(nameOfSurface, selectedObject, mo=False)
@@ -714,9 +714,8 @@ class ObjectDuplicator(QtGui.QDialog):
                         for point in poly.getPoints('world'):
                             if dt.Vector(point) == dt.Vector(pos):
                                 poly = PyNode(nameOfSurface + '.vtx[' + str(count) + ']')
-                                radians_normals = poly.getNormal()
-                                degrees = radians_normals * 180/math.pi
-                                print(degrees)
+                                normalVector = poly.getNormal()
+                                rotationAngles = getRotationAxis(normalVector)
                             count += 1
 
                     if randomRotation is True:
@@ -735,6 +734,23 @@ class ObjectDuplicator(QtGui.QDialog):
 
             totalVerts = round(float(vertLocCount)/vs*100.0, 2)
             _logger.debug("Generated " + str(vertLocCount) + " locators at vertices for " + str(vs) + " possible vertices. (" + str(totalVerts) + "%) ")
+
+        def getRotationAxis(normalVector):
+            yVector = Vector(normalVector)
+            if pm.upAxis(q=True, axis=True) == 'y':
+                upVector = Vector(0, 1, 0)
+            else:
+                upVector = Vector(0, 0, 1)
+
+            xVector = Vector.cross(yVector, upVector)
+            zVector = Vector.cross(xVector, yVector)
+
+            rotationMatrix = Matrix(
+                xVector.x, xVector.y, xVector.z,
+                yVector.x, yVector.y, yVector.z,
+                zVector.x, zVector.y, zVector.z)
+
+            # rotX = math.arcta
 
         def faceLocators():
             """ Iterates through faces on surface, attaches locators and objects
@@ -764,9 +780,8 @@ class ObjectDuplicator(QtGui.QDialog):
 
                     if setToNormals is True:
                         poly = PyNode(nameOfSurface + '.f[' + str(x) + ']')
-                        radians_normals = poly.getNormal()
-                        degrees = radians_normals * 180/math.pi
-                        print(degrees)
+                        normalVector = poly.getNormal()
+                        rotationMatrix = getRotationAxis(Vector(normalVector))
 
                     if randomRotation is True:
                         pm.setAttr(duplicatedObject[0] + '.rotate', randomRotationNumber, randomRotationNumber, randomRotationNumber)
