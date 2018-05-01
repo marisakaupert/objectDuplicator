@@ -5,7 +5,6 @@
 
 import logging
 from collections import Counter
-import maya.cmds as pm
 import random as r
 import time
 
@@ -14,9 +13,12 @@ import os
 import functools
 from PySide2 import QtGui, QtCore, QtUiTools, QtWidgets
 from shiboken2 import wrapInstance
-# import pyside_dynamic
+import maya.cmds as mc
 import pymel.core as pm
-import maya.OpenMayaUI as omui 
+from pymel.core.datatypes import Vector, Matrix, Point
+from pymel.all import *
+import maya.OpenMayaUI as OpenMayaUI
+import maya.OpenMaya as om
 
 
 logger = logging.getLogger(__name__)
@@ -24,7 +26,7 @@ logger.setLevel(logging.DEBUG)
 
 
 def getMayaWindow():
-    """ pointer to the maya main window  
+    """ pointer to the maya main window
     """
     ptr = omui.MQtUtil.mainWindow()
     if ptr:
@@ -236,7 +238,6 @@ class MakeEffects(QtWidgets.QMainWindow):
         self.maxRandomizedScaleLineEdit.setText(str(floatVal))
         self.scaleValue = floatVal
 
-
     def createGeometry(self):
         # numberGenerated = self.numberGeneratedLCDNumber.value()
         numberGenerated = 1
@@ -300,23 +301,24 @@ class MakeEffects(QtWidgets.QMainWindow):
             # Selects all vertices, puts all vertice coordinates in a list
             pm.select(nameOfSurface)
             vs = pm.polyEvaluate(v=True)
-            verts = [] 
+            verts = []
             vertLocCount = 0
             for i in range(0, vs):
                 verts += (pm.pointPosition(
-                    nameOfSurface + '.vtx['+ str(i) + ']'), )
-            
-            #Creates locators
+                    nameOfSurface + '.vtx[' + str(i) + ']', world=True), )
+
+            # Creates locators
             for v in verts:
-                numGen = r.random() * 10
+                numGen = r.random() * 10.0
                 if (numGen <= num):
-                    vertsLocsNames = pm.spaceLocator(
+                    pm.spaceLocator(
                         n="vertexLoc{0}".format(1), p=(v[0], v[1], v[2]))
                     duplicatedObject = pm.instance(selectedObject, leaf=True)
-
                     pm.setAttr(
                         duplicatedObject[0] + '.translate',
                         v[0], v[1] + scaleOfItems, v[2])
+
+                    vertRotations = calculateRotations(node=nameOfSurface)
 
                     if (randomScale is True):
                         pm.setAttr(
@@ -337,6 +339,55 @@ class MakeEffects(QtWidgets.QMainWindow):
                 " locators at vertices for " + str(vs) +
                 " possible vertices. (" + str(totalVerts) + "%)")
 
+        def calculateRotations(node=None):
+            rotateOrder = pm.getAttr(node + '.rotateOrder')
+
+            originalPosition = om.MVector(
+                *mc.pointPosition('{0}.vtx[{1}]'.format(
+                    node, 0), world=True))
+            xDirection = om.MVector(
+                *mc.pointPosition('{0}.vtx[{1}]'.format(
+                    node, 1), world=True))
+            upDirection = om.MVector(
+                *mc.pointPosition('{0}.vtx[{1}]'.format(
+                    node, 2), world=True))
+            worldOrigin = om.MVector(0, 0, 0)
+
+            upVector = originalPosition - upDirection
+            xAxis = xDirection - originalPosition
+            zAxis = upVector ^ xAxis
+            yAxis = zAxis ^ xAxis
+
+            xAxisNormalize = xAxis.normal()
+            yAxisNormalize = yAxis.normal()
+            zAxisNormalize = zAxis.normal()
+
+            matrix = om.MMatrix()
+
+            om.MScriptUtil.setDoubleArray(matrix[0], 0, xAxisNormalize.x)
+            om.MScriptUtil.setDoubleArray(matrix[0], 1, xAxisNormalize.y)
+            om.MScriptUtil.setDoubleArray(matrix[0], 2, xAxisNormalize.z)
+            om.MScriptUtil.setDoubleArray(matrix[1], 0, yAxisNormalize.x)
+            om.MScriptUtil.setDoubleArray(matrix[1], 1, yAxisNormalize.y)
+            om.MScriptUtil.setDoubleArray(matrix[1], 2, yAxisNormalize.z)
+            om.MScriptUtil.setDoubleArray(matrix[2], 0, zAxisNormalize.x)
+            om.MScriptUtil.setDoubleArray(matrix[2], 1, zAxisNormalize.y)
+            om.MScriptUtil.setDoubleArray(matrix[2], 2, zAxisNormalize.z)
+
+            mTransformMtx = om.MTransformationMatrix(matrix)
+
+            eulerRot = mTransformMtx.eulerRotation()
+
+            eulerRot.reorderIt(rotateOrder)
+
+            rotAngle = [
+                math.degrees(angle) for angle in (
+                    eulerRot.x, eulerRot.y, eulerRot.z)]
+
+            print('Angles: {0}'.format(rotAngle))
+
+            return rotAngle
+
         def faceLocators():
             """ Iterates through faces on surface, attaches Locators """
 
@@ -346,7 +397,7 @@ class MakeEffects(QtWidgets.QMainWindow):
             faces = []
             faceLocCount = 0
             for x in range(0, fc):
-                numGen = r.random() * 10
+                numGen = r.random() * 10.0
                 bBox = pm.xform(
                     nameOfSurface + '.f['+str(x)+']',
                     ws=True, q=True, bb=True)
@@ -360,7 +411,6 @@ class MakeEffects(QtWidgets.QMainWindow):
                         n="faceLoc{0}".format(1),
                         p=(transX, transY, transZ))
                     duplicatedObject = pm.instance(selectedObject, leaf=True)
-
                     pm.setAttr(
                         duplicatedObject[0] + '.translate',
                         transX, transY + scaleOfItems, transZ)
