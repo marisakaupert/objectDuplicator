@@ -34,7 +34,7 @@ ob.run()
 
 
 def getMayaWindow():
-    """ Pointer to the Maya Main Window 
+    """ Pointer to the Maya Main Window
     """
 
     ptr = omui.MQtUtil.mainWindow()

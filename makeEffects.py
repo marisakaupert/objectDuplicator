@@ -17,7 +17,7 @@ import maya.cmds as mc
 import pymel.core as pm
 from pymel.core.datatypes import Vector, Matrix, Point
 from pymel.all import *
-import maya.OpenMayaUI as OpenMayaUI
+import maya.OpenMayaUI as omui
 import maya.OpenMaya as om
 
 
@@ -318,7 +318,8 @@ class MakeEffects(QtWidgets.QMainWindow):
                         duplicatedObject[0] + '.translate',
                         v[0], v[1] + scaleOfItems, v[2])
 
-                    vertRotations = calculateRotations(node=nameOfSurface)
+                    vertRotations = calculateRotations(
+                        node=nameOfSurface, vertPositions=v)
 
                     if (randomScale is True):
                         pm.setAttr(
@@ -339,54 +340,24 @@ class MakeEffects(QtWidgets.QMainWindow):
                 " locators at vertices for " + str(vs) +
                 " possible vertices. (" + str(totalVerts) + "%)")
 
-        def calculateRotations(node=None):
+        def calculateRotations(node=None, vertPositions=None):
             rotateOrder = pm.getAttr(node + '.rotateOrder')
-
-            originalPosition = om.MVector(
-                *mc.pointPosition('{0}.vtx[{1}]'.format(
-                    node, 0), world=True))
-            xDirection = om.MVector(
-                *mc.pointPosition('{0}.vtx[{1}]'.format(
-                    node, 1), world=True))
-            upDirection = om.MVector(
-                *mc.pointPosition('{0}.vtx[{1}]'.format(
-                    node, 2), world=True))
             worldOrigin = om.MVector(0, 0, 0)
 
-            upVector = originalPosition - upDirection
-            xAxis = xDirection - originalPosition
-            zAxis = upVector ^ xAxis
-            yAxis = zAxis ^ xAxis
 
-            xAxisNormalize = xAxis.normal()
-            yAxisNormalize = yAxis.normal()
-            zAxisNormalize = zAxis.normal()
+            # mTransformMtx = om.MTransformationMatrix(matrix)
 
-            matrix = om.MMatrix()
+            # eulerRot = mTransformMtx.eulerRotation()
 
-            om.MScriptUtil.setDoubleArray(matrix[0], 0, xAxisNormalize.x)
-            om.MScriptUtil.setDoubleArray(matrix[0], 1, xAxisNormalize.y)
-            om.MScriptUtil.setDoubleArray(matrix[0], 2, xAxisNormalize.z)
-            om.MScriptUtil.setDoubleArray(matrix[1], 0, yAxisNormalize.x)
-            om.MScriptUtil.setDoubleArray(matrix[1], 1, yAxisNormalize.y)
-            om.MScriptUtil.setDoubleArray(matrix[1], 2, yAxisNormalize.z)
-            om.MScriptUtil.setDoubleArray(matrix[2], 0, zAxisNormalize.x)
-            om.MScriptUtil.setDoubleArray(matrix[2], 1, zAxisNormalize.y)
-            om.MScriptUtil.setDoubleArray(matrix[2], 2, zAxisNormalize.z)
+            # eulerRot.reorderIt(rotateOrder)
 
-            mTransformMtx = om.MTransformationMatrix(matrix)
+            # rotAngle = [
+            #     math.degrees(angle) for angle in (
+            #         eulerRot.x, eulerRot.y, eulerRot.z)]
 
-            eulerRot = mTransformMtx.eulerRotation()
+            # print('Angles: {0}'.format(rotAngle))
 
-            eulerRot.reorderIt(rotateOrder)
-
-            rotAngle = [
-                math.degrees(angle) for angle in (
-                    eulerRot.x, eulerRot.y, eulerRot.z)]
-
-            print('Angles: {0}'.format(rotAngle))
-
-            return rotAngle
+            # return rotAngle
 
         def faceLocators():
             """ Iterates through faces on surface, attaches Locators """
