@@ -113,7 +113,7 @@ class ObjectDuplicator(QtWidgets.QMainWindow):
         self.percentageGeneratedLabel = QtWidgets.QLabel(
             "Percentage Generated: ")
         self.horizontalLayout_2.addWidget(self.percentageGeneratedLabel)
-        self.percentageGeneratedLineEdit = QtWidgets.QLineEdit("1.0")
+        self.percentageGeneratedLineEdit = QtWidgets.QLineEdit("1")
         self.horizontalLayout_2.addWidget(self.percentageGeneratedLineEdit)
 
         self.percentageGeneratedHorizontalSlider = QtWidgets.QSlider()
@@ -241,7 +241,7 @@ class ObjectDuplicator(QtWidgets.QMainWindow):
         numberToGenerate = float(self.percentageGeneratedLineEdit.text())/100.0
 
         if self.setRotationToNormals.isChecked():
-            stToNormals = True
+            setToNormals = True
         else:
             setToNormals = False
 
@@ -257,15 +257,12 @@ class ObjectDuplicator(QtWidgets.QMainWindow):
         pm.delete(allVertexLocs, allFaceLocs)
 
     def deleteObjects(self):
-        try:
-            for vertLoc in self.vertLocsList:
-                pm.delete(vertLoc)
-            for faceLoc in self.faceLocsList:
-                pm.delete(faceLoc)
-        except:
-            print(
-                'You have opened and reopened the ui.'
-                ' Deleting everything with the same name.')
+        leafObjects = mc.ls(lf=True)
+        noNumbers = [dup[:-1] for dup in leafObjects if 'Loc' not in dup]
+        toDelete = [num for num in noNumbers if noNumbers.count(num) > 1]
+        for objNum in range(2, len(toDelete)):
+            print objNum
+            mc.delete(str(toDelete[objNum]+objNum))
 
     def findFile(self):
         """ Opens browser to find a file.
@@ -293,19 +290,19 @@ class ObjectDuplicator(QtWidgets.QMainWindow):
         """ Populates a given surface with objects.
             @param num: int, percentage of geometry to be covered
             @param nameOfsurface: str, name of surface
-            @param nameOfsurface: str, name given by user to determine the surface
+            @param nameOfsurface: str, name given by user to determine
+                                       the surface
         """
 
         selectedObject = pm.ls(sl=True)
-        sizeOfSelectedObject = int(pm.getAttr(selectedObject[0] + '.scaleY'))
-        boundingBox = pm.exactWorldBoundingBox(selectedObject)
-        bottom = [
-            (boundingBox[0] + boundingBox[3])/2, boundingBox[1], (boundingBox[2] + boundingBox[5])/2]
-        pm.xform(selectedObject, piv=bottom, ws=True)
+        # sizeOfSelectedObject = int(pm.getAttr(selectedObject[0] + '.scaleY'))
+        # boundingBox = pm.exactWorldBoundingBox(selectedObject)
+        # bottom = [
+        #     (boundingBox[0] + boundingBox[3])/2, boundingBox[1], (boundingBox[2] + boundingBox[5])/2]
+        # pm.xform(selectedObject, piv=bottom, ws=True)
         pm.select(nameOfSurface)
         pm.select(selectedObject, add=True)
-        pm.parentConstraint(nameOfSurface, selectedObject, mo=False)
-        pm.delete(selectedObject, cn=True)
+        pm.delete(pm.parentConstraint(nameOfSurface, selectedObject, mo=False))
 
         def vertLocators():
             """ Iterates through vertices on surface, attaches locators and objects
@@ -325,12 +322,17 @@ class ObjectDuplicator(QtWidgets.QMainWindow):
             for v in verts:
                 numGen = r.random()
                 if (numGen <= num):
-                    pm.spaceLocator(n="vertexLoc{0}".format(1), p=(v[0], v[1], v[2]))
-                    duplicatedObject = pm.instance(selectedObject, leaf=True)
-                    pm.setAttr(duplicatedObject[0] + '.translate', (v[0], v[1], v[2]))
+                    pm.spaceLocator(
+                        n="vertexLoc{0}".format(1), p=(v[0], v[1], v[2]))
+                    duplicatedObject = pm.instance(selectedObject, lf=True)
+                    pm.setAttr(duplicatedObject[0]+'.translate', v[0], v[1], v[2])
 
                     if setToNormals is True:
-                        pass
+                        pm.delete(
+                            pm.aimConstraint(
+                                selectedObject, duplicatedObject[0],
+                                aimVector=[0, -1, 0], upVector=[0, 1, 0],
+                                worldUpVector=[0, 1, 0]))
 
                     allSceneVertLocs.append(duplicatedObject)
                     vertLocCount += 1
@@ -351,19 +353,28 @@ class ObjectDuplicator(QtWidgets.QMainWindow):
             faceLocCount = 0
             for x in range(0, fc):
                 numGen = r.random()
-                bBox = pm.xform(nameOfSurface + '.f['+str(x)+']', ws=True, q=True, bb=True)
+                bBox = pm.xform(
+                    nameOfSurface + '.f['+str(x)+']',
+                    ws=True, q=True, bb=True)
                 transX = (bBox[0] + bBox[3])/2
                 transY = (bBox[1] + bBox[4])/2
                 transZ = (bBox[2] + bBox[5])/2
 
                 # Creates locators
                 if (numGen <= num):
-                    pm.spaceLocator(n="faceLoc{0}".format(1), p=(transX, transY, transZ))
+                    pm.spaceLocator(
+                        n="faceLoc{0}".format(1), p=(transX, transY, transZ))
                     duplicatedObject = pm.instance(selectedObject, leaf=True)
-                    pm.setAttr(duplicatedObject[0] + '.translate', transX, transY, transZ)
+                    pm.setAttr(
+                        duplicatedObject[0] + '.translate',
+                        transX, transY, transZ)
 
                     if setToNormals is True:
-                        pass
+                        pm.delete(
+                            pm.aimConstraint(
+                                selectedObject, duplicatedObject[0],
+                                aimVector=[0, -1, 0], upVector=[0, 1, 0],
+                                worldUpVector=[0, 1, 0]))
 
                     allSceneFaceLocs.append(duplicatedObject)
                     faceLocCount += 1
@@ -378,5 +389,5 @@ class ObjectDuplicator(QtWidgets.QMainWindow):
             _logger.error(
                 "Error. Enter a name of a plane that exists in your scene.")
         else:
-            self.vertLocsList = vertLocators()
-            self.faceLocsList = faceLocators()
+            vertLocators()
+            faceLocators()
