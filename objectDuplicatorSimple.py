@@ -43,7 +43,7 @@ def getMayaWindow():
 
 
 def run():
-    """ Builds the UI. Call This function to run the UI.
+    """ Builds the UI. Call This function to run the UI
     """
 
     global win
@@ -56,7 +56,7 @@ def run():
 
 
 def stopwatch(func):
-    """ Monitors the time it took to run each function.
+    """ Monitors the time it took to run each function
         @return: float, total seconds
     """
 
@@ -83,6 +83,7 @@ class ObjectDuplicator(QtWidgets.QMainWindow):
         super(ObjectDuplicator, self).__init__(parent)
 
         self.generatedValue = 1.0
+        self.allDupGroups = []
 
         self.setCentralWidget(QtWidgets.QWidget(self))
         self.gridLayout = QtWidgets.QGridLayout()
@@ -92,7 +93,10 @@ class ObjectDuplicator(QtWidgets.QMainWindow):
 
         self.instructionsLabel = QtWidgets.QLabel(
             "To use tool, enter name of surface you want objects duplicated on"
-            " below and then select objects to duplicated. Press button to create geometry.")
+            " below and then select objects to duplicated."
+            " A group will be created with all duplicated objects,"
+            " enter name of group otherwise a default name will be given."
+            "\nPress button to create geometry.")
         self.instructionsLabel.setAlignment(QtCore.Qt.AlignCenter)
         self.instructionsLabel.setWordWrap(True)
         self.verticalLayout_2.addWidget(self.instructionsLabel)
@@ -105,8 +109,18 @@ class ObjectDuplicator(QtWidgets.QMainWindow):
 
         self.nameOfSurfaceLineEdit = QtWidgets.QLineEdit()
         self.horizontalLayout.addWidget(self.nameOfSurfaceLineEdit)
-
         self.verticalLayout_2.addLayout(self.horizontalLayout)
+
+        self.horizontalLayout_11 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_11.setContentsMargins(5, 5, 5, 5)
+
+        self.nameOfGroupLabel = QtWidgets.QLabel("Name of Group: ")
+        self.horizontalLayout_11.addWidget(self.nameOfGroupLabel)
+
+        self.nameOfGroupLineEdit = QtWidgets.QLineEdit()
+        self.horizontalLayout_11.addWidget(self.nameOfGroupLineEdit)
+        self.verticalLayout_2.addLayout(self.horizontalLayout_11)
+
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_2.setContentsMargins(5, 5, 5, 5)
 
@@ -124,27 +138,21 @@ class ObjectDuplicator(QtWidgets.QMainWindow):
         self.horizontalLayout_2.addWidget(
             self.percentageGeneratedHorizontalSlider)
 
-        self.verticalLayout_2.addLayout(self.horizontalLayout_2)
-
-        self.horizontalLayout_8 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_8.setContentsMargins(5, 5, 5, 5)
-
         self.setRotationToNormals = QtWidgets.QCheckBox(
             "Set Rotation to Surface")
-        self.horizontalLayout_8.addWidget(self.setRotationToNormals)
+        self.horizontalLayout_2.addWidget(
+            self.setRotationToNormals)
 
-        self.verticalLayout_2.addLayout(self.horizontalLayout_8)
+        self.verticalLayout_2.addLayout(self.horizontalLayout_2)
+
         self.verticalLayout = QtWidgets.QVBoxLayout()
         self.verticalLayout.setContentsMargins(5, 5, 5, 5)
 
         self.createGeometryPushButton = QtWidgets.QPushButton("Create Objects")
         self.verticalLayout.addWidget(self.createGeometryPushButton)
 
-        self.deleteLocatorsPushButton = QtWidgets.QPushButton("Delete Locators")
-        self.verticalLayout.addWidget(self.deleteLocatorsPushButton)
-
         self.deleteObjectsPushButton = QtWidgets.QPushButton(
-            "Delete Duplicated Objects")
+            "Delete Duplicated Objects Group")
         self.verticalLayout.addWidget(self.deleteObjectsPushButton)
 
         self.verticalLayout_2.addLayout(self.verticalLayout)
@@ -180,15 +188,16 @@ class ObjectDuplicator(QtWidgets.QMainWindow):
         self.show()
 
     def initStateOfUI(self):
-        """ Sets the initial state of the UI before anything is done.
+        """ Sets the initial state of the UI before anything is done
         """
 
         self.nameOfSurfaceLineEdit.setPlaceholderText("Name of Geometry Here")
+        self.nameOfGroupLineEdit.setPlaceholderText("Name of Group Here")
         self.percentageGeneratedHorizontalSlider.setValue(self.generatedValue)
         self.fileNameLineEdit.setPlaceholderText("File Name Here")
 
     def makeConnections(self):
-        """ All functions to make the UI work.
+        """ All functions to make the UI work
         """
 
         self.percentageGeneratedHorizontalSlider.valueChanged[int].connect(
@@ -199,9 +208,6 @@ class ObjectDuplicator(QtWidgets.QMainWindow):
         self.createGeometryPushButton.clicked.connect(
             functools.partial(self.createGeometry))
 
-        self.deleteLocatorsPushButton.clicked.connect(
-            functools.partial(self.deleteLocators))
-
         self.deleteObjectsPushButton.clicked.connect(
             functools.partial(self.deleteObjects))
 
@@ -210,7 +216,7 @@ class ObjectDuplicator(QtWidgets.QMainWindow):
         self.importPushButton.clicked.connect(self.importFile)
 
     def percentageChange(self, value):
-        """ Changes the percentage number to mirror the slider.
+        """ Changes the percentage number to mirror the slider
             @param value: numbers 1-100
         """
 
@@ -219,7 +225,7 @@ class ObjectDuplicator(QtWidgets.QMainWindow):
         self.generatedValue = floatValue
 
     def manualPercentageEnteredEvent(self):
-        """ Forces the slider to mirror the value when a manual percentage is entered.
+        """ Forces the slider to mirror the value when a manual percentage is entered
         """
 
         userInputScale = float(self.percentageGeneratedLineEdit.text())
@@ -234,7 +240,7 @@ class ObjectDuplicator(QtWidgets.QMainWindow):
         self.percentageGeneratedHorizontalSlider.setValue(self.generatedValue)
 
     def createGeometry(self):
-        """ Calls main function to create objects at various vertices and locators.
+        """ Calls main function to create objects at various vertices and locators
         """
 
         name = self.nameOfSurfaceLineEdit.text()
@@ -245,27 +251,23 @@ class ObjectDuplicator(QtWidgets.QMainWindow):
         else:
             setToNormals = False
 
-        self.makeLocators(
-            numberToGenerate, name, setToNormals)
-
-    def deleteLocators(self):
-        """ Deleted all locators made from UI.
-        """
-
-        allVertexLocs = pm.ls('vertexLoc*')
-        allFaceLocs = pm.ls('faceLoc*')
-        pm.delete(allVertexLocs, allFaceLocs)
+        if self.nameOfSurfaceLineEdit.text() == "":
+            _logger.debug(
+                "Please enter the name of the surface"
+                " you want objects duplicated on.")
+        elif len(pm.ls(sl=True)) < 1:
+            _logger.debug(
+                "Please select the object you want duplicated.")
+        else:
+            self.makeLocators(
+                numberToGenerate, name, setToNormals)
 
     def deleteObjects(self):
-        leafObjects = mc.ls(lf=True)
-        noNumbers = [dup[:-1] for dup in leafObjects if 'Loc' not in dup]
-        toDelete = [num for num in noNumbers if noNumbers.count(num) > 1]
-        for objNum in range(2, len(toDelete)):
-            print objNum
-            mc.delete(str(toDelete[objNum]+objNum))
+        pm.select(cl=True)
+        pm.delete(self.allDupGroups)
 
     def findFile(self):
-        """ Opens browser to find a file.
+        """ Opens browser to find a file
         """
 
         fileName = None
@@ -278,7 +280,7 @@ class ObjectDuplicator(QtWidgets.QMainWindow):
             self.fileNameLineEdit.setText(fileName[0])
 
     def importFile(self):
-        """ Imports selected file.
+        """ Imports selected file
         """
 
         fileToImport = self.fileNameLineEdit.text()
@@ -295,20 +297,19 @@ class ObjectDuplicator(QtWidgets.QMainWindow):
         """
 
         selectedObject = pm.ls(sl=True)
-        # sizeOfSelectedObject = int(pm.getAttr(selectedObject[0] + '.scaleY'))
-        # boundingBox = pm.exactWorldBoundingBox(selectedObject)
-        # bottom = [
-        #     (boundingBox[0] + boundingBox[3])/2, boundingBox[1], (boundingBox[2] + boundingBox[5])/2]
-        # pm.xform(selectedObject, piv=bottom, ws=True)
         pm.select(nameOfSurface)
         pm.select(selectedObject, add=True)
-        pm.delete(pm.parentConstraint(nameOfSurface, selectedObject, mo=False))
+        if self.nameOfGroupLineEdit.text() == "":
+            duplicateGroup = pm.group(n="duplicatedObjectsGrp{0}".format(1), em=True)
+        else:
+            duplicateGroup = pm.group(n=self.nameOfGroupLineEdit.text(), em=True)
+        self.allDupGroups.append(duplicateGroup)
 
         def vertLocators():
             """ Iterates through vertices on surface, attaches locators and objects
             """
 
-            allSceneVertLocs = []
+            aimLoc = pm.spaceLocator(n="aimLoc")
 
             # Selects all vertices, puts all vertice coordinates in a list
             pm.select(nameOfSurface)
@@ -322,30 +323,36 @@ class ObjectDuplicator(QtWidgets.QMainWindow):
             for v in verts:
                 numGen = r.random()
                 if (numGen <= num):
-                    pm.spaceLocator(
+                    vertLoc = pm.spaceLocator(
                         n="vertexLoc{0}".format(1), p=(v[0], v[1], v[2]))
+                    pm.xform(centerPivots=True)
+                    pm.delete(pm.aimConstraint(
+                        aimLoc, vertLoc,
+                        aimVector=[0, -1, 0], upVector=[0, 1, 0],
+                        worldUpVector=[0, 1, 0]))
                     duplicatedObject = pm.instance(selectedObject, lf=True)
-                    pm.setAttr(duplicatedObject[0]+'.translate', v[0], v[1], v[2])
+                    rotVal = pm.getAttr(vertLoc + '.rotate')
+                    pm.setAttr(
+                        duplicatedObject[0] + '.translate', v[0], v[1], v[2])
+                    pm.setAttr(
+                        duplicatedObject[0] + '.rotate', rotVal[0], rotVal[1], rotVal[2])
 
-                    if setToNormals is True:
-                        pm.delete(
-                            pm.aimConstraint(
-                                selectedObject, duplicatedObject[0],
-                                aimVector=[0, -1, 0], upVector=[0, 1, 0],
-                                worldUpVector=[0, 1, 0]))
+                    if setToNormals is False:
+                        pm.setAttr(
+                            duplicatedObject[0] + '.rotate', 0, 0, 0)
+                        pm.setAttr(
+                            vertLoc + '.rotate', 0, 0, 0)
 
-                    allSceneVertLocs.append(duplicatedObject)
+                    pm.parent(vertLoc, duplicatedObject[0], duplicateGroup)
                     vertLocCount += 1
 
+            pm.delete(aimLoc)
             totalVerts = round(float(vertLocCount)/vs*100.0, 2)
             _logger.debug("Generated " + str(vertLocCount) + " locators at vertices for " + str(vs) + " possible vertices. (" + str(totalVerts) + "%) ")
-            return allSceneVertLocs
 
         def faceLocators():
             """ Iterates through faces on surface, attaches locators and objects
             """
-
-            allSceneFaceLocs = []
 
             # Selects all faces, puts average center coordinates in a list
             pm.select(nameOfSurface)
@@ -376,12 +383,10 @@ class ObjectDuplicator(QtWidgets.QMainWindow):
                                 aimVector=[0, -1, 0], upVector=[0, 1, 0],
                                 worldUpVector=[0, 1, 0]))
 
-                    allSceneFaceLocs.append(duplicatedObject)
                     faceLocCount += 1
 
             totalFace = round(float(faceLocCount)/fc*100.0, 2)
             _logger.debug("Generated " + str(faceLocCount) + " locators at faces for " + str(fc) + " possible surfaces.(" + str(totalFace) + "%) ")
-            return allSceneFaceLocs
 
         if (num < 0.01 or num > 10.0):
             _logger.error("Error. Please input a number between 1 and 100")
@@ -390,4 +395,5 @@ class ObjectDuplicator(QtWidgets.QMainWindow):
                 "Error. Enter a name of a plane that exists in your scene.")
         else:
             vertLocators()
-            faceLocators()
+            # faceLocators()
+            pm.select(cl=True)
