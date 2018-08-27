@@ -16,6 +16,7 @@ import pymel.core as pm
 from pymel.core.datatypes import Vector, Matrix, Point
 from pymel.all import *
 import maya.OpenMayaUI as omui
+import maya.api.OpenMaya as om
 
 _logger = logging.getLogger(__name__)
 _logger.setLevel(logging.DEBUG)
@@ -354,6 +355,8 @@ class ObjectDuplicator(QtWidgets.QMainWindow):
             """ Iterates through faces on surface, attaches locators and objects
             """
 
+            aimLoc = pm.spaceLocator(n="aimLoc")
+
             # Selects all faces, puts average center coordinates in a list
             pm.select(nameOfSurface)
             fc = pm.polyEvaluate(face=True)
@@ -369,22 +372,30 @@ class ObjectDuplicator(QtWidgets.QMainWindow):
 
                 # Creates locators
                 if (numGen <= num):
-                    pm.spaceLocator(
+                    faceLoc = pm.spaceLocator(
                         n="faceLoc{0}".format(1), p=(transX, transY, transZ))
-                    duplicatedObject = pm.instance(selectedObject, leaf=True)
+                    pm.xform(centerPivots=True)
+                    pm.delete(pm.aimConstraint(
+                        aimLoc, faceLoc,
+                        aimVector=[0, -1, 0], upVector=[0, 1, 0],
+                        worldUpVector=[0, 1, 0]))
+                    duplicatedObject = pm.instance(selectedObject, lf=True)
+                    rotVal = pm.getAttr(faceLoc + '.rotate')
                     pm.setAttr(
-                        duplicatedObject[0] + '.translate',
-                        transX, transY, transZ)
+                        duplicatedObject[0] + '.translate', transX, transY, transZ)
+                    pm.setAttr(
+                        duplicatedObject[0] + '.rotate', rotVal[0], rotVal[1], rotVal[2])
 
-                    if setToNormals is True:
-                        pm.delete(
-                            pm.aimConstraint(
-                                selectedObject, duplicatedObject[0],
-                                aimVector=[0, -1, 0], upVector=[0, 1, 0],
-                                worldUpVector=[0, 1, 0]))
+                    if setToNormals is False:
+                        pm.setAttr(
+                            duplicatedObject[0] + '.rotate', 0, 0, 0)
+                        pm.setAttr(
+                            faceLoc + '.rotate', 0, 0, 0)
 
+                    pm.parent(faceLoc, duplicatedObject[0], duplicateGroup)
                     faceLocCount += 1
 
+            pm.delete(aimLoc)
             totalFace = round(float(faceLocCount)/fc*100.0, 2)
             _logger.debug("Generated " + str(faceLocCount) + " locators at faces for " + str(fc) + " possible surfaces.(" + str(totalFace) + "%) ")
 
@@ -395,5 +406,5 @@ class ObjectDuplicator(QtWidgets.QMainWindow):
                 "Error. Enter a name of a plane that exists in your scene.")
         else:
             vertLocators()
-            # faceLocators()
+            faceLocators()
             pm.select(cl=True)
